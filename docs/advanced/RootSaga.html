@@ -1,0 +1,687 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <title>3.13 Root Saga Patterns · Redux-Saga</title>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.0">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-prism/prism.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../../build/gitbook.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../recipes/" />
+    
+    
+    <link rel="prev" href="Channels.html" />
+    
+
+    
+        <link rel="shortcut icon" href='../../logo/favicon/favicon.ico' type="image/x-icon">
+    
+    
+        <link rel="bookmark" href='../../logo/favicon/favicon.ico' type="image/x-icon">
+    
+    
+        <link rel="apple-touch-icon" href='../../logo/favicon/apple-touch-icon-152x152.png'>
+    
+    
+        
+        <link rel="apple-touch-icon" sizes="120x120" href="../../logo/favicon/apple-touch-icon-120x120.png">
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="../../logo/favicon/apple-touch-icon-180x180.png">
+        
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    Read Me
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../introduction/">
+            
+                <a href="../introduction/">
+            
+                    
+                    1. Introduction
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../introduction/BeginnerTutorial.html">
+            
+                <a href="../introduction/BeginnerTutorial.html">
+            
+                    
+                    1.1 Beginner Tutorial
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../introduction/SagaBackground.html">
+            
+                <a href="../introduction/SagaBackground.html">
+            
+                    
+                    1.2 Saga Background
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../basics/">
+            
+                <a href="../basics/">
+            
+                    
+                    2. Basic Concepts
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../basics/UsingSagaHelpers.html">
+            
+                <a href="../basics/UsingSagaHelpers.html">
+            
+                    
+                    2.1 Using Saga Helpers
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../basics/DeclarativeEffects.html">
+            
+                <a href="../basics/DeclarativeEffects.html">
+            
+                    
+                    2.2 Declarative Effects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../basics/DispatchingActions.html">
+            
+                <a href="../basics/DispatchingActions.html">
+            
+                    
+                    2.3 Dispatching actions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../basics/ErrorHandling.html">
+            
+                <a href="../basics/ErrorHandling.html">
+            
+                    
+                    2.4 Error handling
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="../basics/Effect.html">
+            
+                <a href="../basics/Effect.html">
+            
+                    
+                    2.5 A common abstraction: Effect
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    3. Advanced Concepts
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="FutureActions.html">
+            
+                <a href="FutureActions.html">
+            
+                    
+                    3.1 Pulling future actions
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="NonBlockingCalls.html">
+            
+                <a href="NonBlockingCalls.html">
+            
+                    
+                    3.2 Non blocking calls
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="RunningTasksInParallel.html">
+            
+                <a href="RunningTasksInParallel.html">
+            
+                    
+                    3.3 Running tasks in parallel
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="RacingEffects.html">
+            
+                <a href="RacingEffects.html">
+            
+                    
+                    3.4 Starting a race between multiple Effects
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="SequencingSagas.html">
+            
+                <a href="SequencingSagas.html">
+            
+                    
+                    3.5 Sequencing Sagas using yield*
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="ComposingSagas.html">
+            
+                <a href="ComposingSagas.html">
+            
+                    
+                    3.6 Composing Sagas
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="TaskCancellation.html">
+            
+                <a href="TaskCancellation.html">
+            
+                    
+                    3.7 Task cancellation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="ForkModel.html">
+            
+                <a href="ForkModel.html">
+            
+                    
+                    3.8 redux-saga's fork model
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="Concurrency.html">
+            
+                <a href="Concurrency.html">
+            
+                    
+                    3.9 Common Concurrency Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.10" data-path="Testing.html">
+            
+                <a href="Testing.html">
+            
+                    
+                    3.10 Examples of Testing Sagas
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.11" data-path="UsingRunSaga.html">
+            
+                <a href="UsingRunSaga.html">
+            
+                    
+                    3.11 Connecting Sagas to external Input/Output
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.12" data-path="Channels.html">
+            
+                <a href="Channels.html">
+            
+                    
+                    3.12 Using Channels
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.13" data-path="RootSaga.html">
+            
+                <a href="RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../recipes/">
+            
+                <a href="../recipes/">
+            
+                    
+                    4. Recipes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.6" data-path="../ExternalResources.html">
+            
+                <a href="../ExternalResources.html">
+            
+                    
+                    5. External Resources
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.7" data-path="../Troubleshooting.html">
+            
+                <a href="../Troubleshooting.html">
+            
+                    
+                    6. Troubleshooting
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.8" data-path="../Glossary.html">
+            
+                <a href="../Glossary.html">
+            
+                    
+                    7. Glossary
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.9" data-path="../api/">
+            
+                <a href="../api/">
+            
+                    
+                    8. API Reference
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >3.13 Root Saga Patterns</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="setting-up-your-root-saga">Setting up your root Saga</h1><p>In the beginner tutorial it is shown that your root saga will look something like this</p><pre><code class="lang-javascript"><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">rootSaga</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
+    <span class="token function">helloSaga</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">watchIncrementAsync</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">]</span><span class="token punctuation">)</span>
+  <span class="token comment" spellcheck="true">// code after all-effect</span>
+<span class="token punctuation">}</span></code></pre>
+<p>This is one of a few ways to implement your root. Here, the <code>all</code> effect is used with an array and your sagas will be executed in parallel. Other root implementations may help you better handle errors and more complex data flow.</p><p>Contributor @slorber mentioned in <a href="https://github.com/redux-saga/redux-saga/issues/760" target="_blank">issue#760</a> several other common root implementations. To start, there is one popular implementation that behaves similarly to the tutorial root saga behavior:</p><pre><code class="lang-javascript"><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">root</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga1<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga2<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga3<span class="token punctuation">)</span>
+  <span class="token comment" spellcheck="true">// code after fork-effect</span>
+<span class="token punctuation">}</span></code></pre>
+<p>Using three unique <code>yield fork</code> will give back a task descriptor three times. The resulting behavior in your app is that all of your sub-sagas are started and executed in the same order. <code>fork</code> is non-blocking and so allows the <code>rootSaga</code> in these two cases to finish while the child sagas are kept running and blocked by their internal effects.</p><p>The difference between one big all effect and several fork effects are that all effect is blocking, so <em>code after all-effect</em> (see comments in above code) is executed after all the children sagas completes, while fork effects are non-blocking and <em>code after fork-effect</em> gets executed right after yielding fork effects. Another difference is that you can get task descriptors when using fork effects, so in the subsequent code you can cancel/join the forked task via task descriptors.</p><h2 id="nesting-fork-effects-in-all-effect">Nesting fork effects in all effect</h2><pre><code class="lang-javascript"><span class="token keyword">const</span> <span class="token punctuation">[</span>task1<span class="token punctuation">,</span> task2<span class="token punctuation">,</span> task3<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga1<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga2<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga3<span class="token punctuation">)</span> <span class="token punctuation">]</span><span class="token punctuation">)</span></code></pre>
+<p>There is another popular pattern when designing root saga: nesting <code>fork</code> effects in an <code>all</code> effect. By doing so, you can get an array of task descriptors, and the code after the <code>all</code> effect will be executed immediately because each <code>fork</code> effect is non-blocking and synchronously returning a task descriptor.</p><p>Note that though <code>fork</code> effects are nested in an <code>all</code> effect, they are always connected to the parent task through the underlying forkQueue. Uncaught errors from forked tasks bubble to the parent task and thus abort it (and all its child tasks) - they cannot be caught by the parent task.</p><h2 id="avoid-nesting-fork-effects-in-race-effect">Avoid nesting fork effects in race effect</h2><pre><code class="lang-javascript"><span class="token comment" spellcheck="true">// DO NOT DO THIS. The fork effect always win the race immediately.</span>
+<span class="token keyword">yield</span> <span class="token function">race</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
+  <span class="token function">fork</span><span class="token punctuation">(</span>someSaga<span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token function">take</span><span class="token punctuation">(</span><span class="token string">&apos;SOME-ACTION&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  somePromise<span class="token punctuation">,</span>
+<span class="token punctuation">]</span><span class="token punctuation">)</span></code></pre>
+<p>On the other hand, <code>fork</code> effects in a <code>race</code> effect is most likely a bug. In the above code, since <code>fork</code> effects are non-blocking, they will always win the race immediately.</p><h2 id="keeping-the-root-alive">Keeping the root alive</h2><p>In practice, these implementations aren&apos;t terribly practical because your rootSaga will terminate on the first error in any individual child effect or saga and crash your whole app! Ajax requests in particular would put your app at the mercy of the status of any endpoints your app makes requests to.</p><p><code>spawn</code> is an effect that will <em>disconnect</em> your child saga from its parent, allowing it to fail without crashing it&apos;s parent. Obviously, this does not relieve us from our responsibility as developers from still handling errors as they arise. In fact, it&apos;s possible that this might obscure certain failures from developer&apos;s eyes and cause problems further down the road.</p><p>The <code>spawn</code> effect might be considered similar to <a href="https://reactjs.org/docs/error-boundaries.html" target="_blank">Error Boundaries</a> in React in that it can be used as extra safety measure at some level of the saga tree, cutting off a single feature or something and not letting the whole app crash. The difference is that there is no special syntax like the <code>componentDidCatch</code> that exists for React Error Boundaries. You must still write your own error handling and recovery code.</p><pre><code class="lang-javascript"><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">root</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">spawn</span><span class="token punctuation">(</span>saga1<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">spawn</span><span class="token punctuation">(</span>saga2<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">spawn</span><span class="token punctuation">(</span>saga3<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<h2 id="keeping-everything-alive">Keeping everything alive</h2><p>In some cases, it may be desirable for your sagas to be able to restart in the event of failure. The benefit is that your app and sagas may continue to work after failing, i.e. a saga that <code>yield takeEvery(myActionType)</code>. But we do not recommend this as a blanket solution to keep all sagas alive. It is very likely that it makes more sense to let your saga fail in sanely and predictably and handle/log your error.</p><p>For example, @ajwhite offered this scenario as a case where keeping your saga alive would cause more problems than it solves:</p><pre><code class="lang-javascript"><span class="token keyword">function</span><span class="token operator">*</span> sagaThatMayCrash <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment" spellcheck="true">// wait for something that happens _during app startup_</span>
+  <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>APP_INITIALIZED<span class="token punctuation">)</span>
+
+  <span class="token comment" spellcheck="true">// assume it dies here</span>
+  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>doSomethingThatMayCrash<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<blockquote><p>If the sagaThatMayCrash is restarted, it will restart and wait for an action that only happens once when the application starts up. In this scenario, it restarts, but it never recovers.</p></blockquote><p>But for the specific situations that would benefit from starting, user @granmoe proposed an implementation like this in issue #570:</p><pre><code class="lang-javascript"><span class="token keyword">function</span><span class="token operator">*</span> rootSaga <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> sagas <span class="token operator">=</span> <span class="token punctuation">[</span>
+    saga1<span class="token punctuation">,</span>
+    saga2<span class="token punctuation">,</span>
+    saga3<span class="token punctuation">,</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">yield</span> sagas<span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>saga <span class="token operator">=</span><span class="token operator">&gt;</span>
+    <span class="token function">spawn</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token operator">*</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+          <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>saga<span class="token punctuation">)</span>
+          <span class="token keyword">break</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<p>This strategy maps our child sagas to spawned generators (detaching them from the root parent) which start our sagas as subtasks in a <code>try</code> block. Our saga will run until termination, and then be automatically restarted. The <code>catch</code> block harmlessly handles any error that may have been thrown by, and terminated, our saga.</p>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="Channels.html" class="navigation navigation-prev " aria-label="Previous page: 3.12 Using Channels">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../recipes/" class="navigation navigation-next " aria-label="Next page: 4. Recipes">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"3.13 Root Saga Patterns","level":"1.4.13","depth":2,"next":{"title":"4. Recipes","level":"1.5","depth":1,"path":"docs/recipes/README.md","ref":"docs/recipes/README.md","articles":[]},"previous":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"path":"docs/advanced/Channels.md","ref":"docs/advanced/Channels.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/RootSaga.md","mtime":"2018-11-29T19:43:39.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

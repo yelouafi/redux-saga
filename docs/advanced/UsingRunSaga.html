@@ -238,7 +238,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="RootSaga.html">
+            
+                <a href="RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -536,21 +549,30 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="connecting-sagas-to-external-inputoutput">Connecting Sagas to external Input/Output</h1><p>We saw that <code>take</code> Effects are resolved by waiting for actions to be dispatched to the Store. And that <code>put</code> Effects are resolved by dispatching the actions provided as argument.</p><p>When a Saga is started (either at startup or later dynamically), the middleware automatically connects its <code>take</code>/<code>put</code> to the store. The 2 Effects can be seen as a sort of Input/Output to the Saga.</p><p><code>redux-saga</code> provides a way to run a Saga outside of the Redux middleware environment and connect it to a custom Input/Output.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> runSaga <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
+                                <h1 id="connecting-sagas-to-external-inputoutput">Connecting Sagas to external Input/Output</h1><p>We saw that <code>take</code> Effects are resolved by waiting for actions to be dispatched to the Store. And that <code>put</code> Effects are resolved by dispatching the actions provided as argument.</p><p>When a Saga is started (either at startup or later dynamically), the middleware automatically connects its <code>take</code>/<code>put</code> to the store. The 2 Effects can be seen as a sort of Input/Output to the Saga.</p><p><code>redux-saga</code> provides a way to run a Saga outside of the Redux middleware environment and connect it to a custom Input/Output.</p><pre><code class="lang-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> runSaga<span class="token punctuation">,</span> stdChannel <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
 
-<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">saga</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span>
+<span class="token keyword">const</span> emitter <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">EventEmitter</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> channel <span class="token operator">=</span> <span class="token function">stdChannel</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+emitter<span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&quot;action&quot;</span><span class="token punctuation">,</span> channel<span class="token punctuation">.</span>put<span class="token punctuation">)</span>
 
 <span class="token keyword">const</span> myIO <span class="token operator">=</span> <span class="token punctuation">{</span>
-  subscribe<span class="token punctuation">:</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">,</span> <span class="token comment" spellcheck="true">// this will be used to resolve take Effects</span>
-  dispatch<span class="token punctuation">:</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">,</span>  <span class="token comment" spellcheck="true">// this will be used to resolve put Effects</span>
-  getState<span class="token punctuation">:</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">,</span>  <span class="token comment" spellcheck="true">// this will be used to resolve select Effects</span>
+  <span class="token comment" spellcheck="true">// this will be used to orchestrate take and put Effects</span>
+  channel<span class="token punctuation">,</span>
+  <span class="token comment" spellcheck="true">// this will be used to resolve put Effects</span>
+  <span class="token function">dispatch</span><span class="token punctuation">(</span>output<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    emitter<span class="token punctuation">.</span><span class="token function">emit</span><span class="token punctuation">(</span><span class="token string">&quot;action&quot;</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token comment" spellcheck="true">// this will be used to resolve select Effects</span>
+  <span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> state
+  <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 
 <span class="token function">runSaga</span><span class="token punctuation">(</span>
-  myIO
-  saga<span class="token punctuation">,</span>
+  myIO<span class="token punctuation">,</span>
+  <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">saga</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
 <span class="token punctuation">)</span></code></pre>
-<p>For more info, see the <a href="https://redux-saga.js.org/docs/api/index.html##runsagaoptions-saga-args" target="_blank">API docs</a>.</p>
+<p>For more info, see the <a href="https://redux-saga.js.org/docs/api/index.html##runsagaoptions-saga-args" target="_blank">API docs</a>, <a href="Channels.html">Channels</a>, <a href="https://codesandbox.io/s/1yq1lx77jq" target="_blank">demo</a></p>
                                 
                                 </section>
                             
@@ -593,7 +615,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.11 Connecting Sagas to external Input/Output","level":"1.4.11","depth":2,"next":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"path":"docs/advanced/Channels.md","ref":"docs/advanced/Channels.md","articles":[]},"previous":{"title":"3.10 Examples of Testing Sagas","level":"1.4.10","depth":2,"path":"docs/advanced/Testing.md","ref":"docs/advanced/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/UsingRunSaga.md","mtime":"2017-11-02T12:10:20.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.11 Connecting Sagas to external Input/Output","level":"1.4.11","depth":2,"next":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"path":"docs/advanced/Channels.md","ref":"docs/advanced/Channels.md","articles":[]},"previous":{"title":"3.10 Examples of Testing Sagas","level":"1.4.10","depth":2,"path":"docs/advanced/Testing.md","ref":"docs/advanced/Testing.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/UsingRunSaga.md","mtime":"2018-11-29T19:43:39.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

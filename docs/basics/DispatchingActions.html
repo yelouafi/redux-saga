@@ -238,7 +238,7 @@
                 <a href="Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="../advanced/RootSaga.html">
+            
+                <a href="../advanced/RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -546,9 +559,9 @@ Generator could invoke it after receiving the fetch response:</p><pre><code clas
 <span class="token punctuation">}</span></code></pre>
 <p>However, this solution has the same drawbacks as invoking functions directly from inside the Generator (as discussed in the previous section). If we want to test that <code>fetchProducts</code> performs
 the dispatch after receiving the AJAX response, we&apos;ll need again to mock the <code>dispatch</code>
-function.</p><p>Instead, we need the same declarative solution. Just create an Object to instruct the
+function.</p><p>Instead, we need the same declarative solution. Create a plain JavaScript Object to instruct the
 middleware that we need to dispatch some action, and let the middleware perform the real
-dispatch. This way we can test the Generator&apos;s dispatch in the same way: by just inspecting
+dispatch. This way we can test the Generator&apos;s dispatch in the same way: by inspecting
 the yielded Effect and making sure it contains the correct instructions.</p><p>The library provides, for this purpose, another function <code>put</code> which creates the dispatch
 Effect.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 <span class="token comment" spellcheck="true">// ...</span>
@@ -581,8 +594,8 @@ assert<span class="token punctuation">.</span><span class="token function">deepE
 <span class="token punctuation">)</span></code></pre>
 <p>Note how we pass the fake response to the Generator via its <code>next</code> method. Outside the
 middleware environment, we have total control over the Generator, we can simulate a
-real environment by simply mocking results and resuming the Generator with them. Mocking
-data is a lot simpler than mocking functions and spying calls.</p>
+real environment by mocking results and resuming the Generator with them. Mocking
+data is a lot easier than mocking functions and spying calls.</p>
                                 
                                 </section>
                             
@@ -625,7 +638,7 @@ data is a lot simpler than mocking functions and spying calls.</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"2.3 Dispatching actions","level":"1.3.3","depth":2,"next":{"title":"2.4 Error handling","level":"1.3.4","depth":2,"path":"docs/basics/ErrorHandling.md","ref":"docs/basics/ErrorHandling.md","articles":[]},"previous":{"title":"2.2 Declarative Effects","level":"1.3.2","depth":2,"path":"docs/basics/DeclarativeEffects.md","ref":"docs/basics/DeclarativeEffects.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/basics/DispatchingActions.md","mtime":"2017-04-20T07:55:14.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"2.3 Dispatching actions","level":"1.3.3","depth":2,"next":{"title":"2.4 Error handling","level":"1.3.4","depth":2,"path":"docs/basics/ErrorHandling.md","ref":"docs/basics/ErrorHandling.md","articles":[]},"previous":{"title":"2.2 Declarative Effects","level":"1.3.2","depth":2,"path":"docs/basics/DeclarativeEffects.md","ref":"docs/basics/DeclarativeEffects.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/basics/DispatchingActions.md","mtime":"2018-10-09T14:47:43.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

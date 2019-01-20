@@ -238,7 +238,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="RootSaga.html">
+            
+                <a href="RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -536,9 +549,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="running-tasks-in-parallel">Running Tasks In Parallel</h1><p>The <code>yield</code> statement is great for representing asynchronous control flow in a simple and linear style, but we also need to do things in parallel. We can&apos;t simply write:</p><pre><code class="lang-javascript"><span class="token comment" spellcheck="true">// wrong, effects will be executed in sequence</span>
-<span class="token keyword">const</span> users <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>fetch<span class="token punctuation">,</span> <span class="token string">&apos;/users&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-      repos <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>fetch<span class="token punctuation">,</span> <span class="token string">&apos;/repos&apos;</span><span class="token punctuation">)</span></code></pre>
+                                <h1 id="running-tasks-in-parallel">Running Tasks In Parallel</h1><p>The <code>yield</code> statement is great for representing asynchronous control flow in a linear style, but we also need to do things in parallel. We can&apos;t write:</p><pre><code class="lang-javascript"><span class="token comment" spellcheck="true">// wrong, effects will be executed in sequence</span>
+<span class="token keyword">const</span> users <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>fetch<span class="token punctuation">,</span> <span class="token string">&apos;/users&apos;</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> repos <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>fetch<span class="token punctuation">,</span> <span class="token string">&apos;/repos&apos;</span><span class="token punctuation">)</span></code></pre>
 <p>Because the 2nd effect will not get executed until the first call resolves. Instead we have to write:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> all<span class="token punctuation">,</span> call <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token comment" spellcheck="true">// correct, effects will get executed in parallel</span>
@@ -589,7 +602,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.3 Running tasks in parallel","level":"1.4.3","depth":2,"next":{"title":"3.4 Starting a race between multiple Effects","level":"1.4.4","depth":2,"path":"docs/advanced/RacingEffects.md","ref":"docs/advanced/RacingEffects.md","articles":[]},"previous":{"title":"3.2 Non blocking calls","level":"1.4.2","depth":2,"path":"docs/advanced/NonBlockingCalls.md","ref":"docs/advanced/NonBlockingCalls.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/RunningTasksInParallel.md","mtime":"2017-11-05T14:45:30.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.3 Running tasks in parallel","level":"1.4.3","depth":2,"next":{"title":"3.4 Starting a race between multiple Effects","level":"1.4.4","depth":2,"path":"docs/advanced/RacingEffects.md","ref":"docs/advanced/RacingEffects.md","articles":[]},"previous":{"title":"3.2 Non blocking calls","level":"1.4.2","depth":2,"path":"docs/advanced/NonBlockingCalls.md","ref":"docs/advanced/NonBlockingCalls.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/RunningTasksInParallel.md","mtime":"2018-10-09T14:47:43.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

@@ -236,7 +236,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -419,6 +419,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="../advanced/RootSaga.html">
+            
+                <a href="../advanced/RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -539,7 +552,15 @@
 <li><a href="#middlewarerunsaga-args"><code>middleware.run(saga, ...args)</code></a>
 </li></ul>
 </li>
-<li><p><a href="#saga-helpers"><code>Saga Helpers</code></a></p><ul><li><a href="#takeeverypattern-saga-args"><code>takeEvery(pattern, saga, ...args)</code></a>
+<li><p><a href="#effect-creators"><code>Effect creators</code></a></p><ul><li><a href="#takepattern"><code>take(pattern)</code></a>
+</li>
+<li><a href="#takemaybepattern"><code>takeMaybe(pattern)</code></a>
+</li>
+<li><a href="#takechannel"><code>take(channel)</code></a>
+</li>
+<li><a href="#takemaybechannel"><code>takeMaybe(channel)</code></a>
+</li>
+<li><a href="#takeeverypattern-saga-args"><code>takeEvery(pattern, saga, ...args)</code></a>
 </li>
 <li><a href="#takeeverychannel-saga-args"><code>takeEvery(channel, saga, ...args)</code></a>
 </li>
@@ -547,20 +568,13 @@
 </li>
 <li><a href="#takelatestchannel-saga-args"><code>takeLatest(channel, saga, ..args)</code></a>
 </li>
-<li><a href="#throttlems-pattern-saga-args"><code>throttle(ms, pattern, saga, ..args)</code></a>
-</li></ul>
+<li><a href="#takeleadingpattern-saga-args"><code>takeLeading(pattern, saga, ..args)</code></a>
 </li>
-<li><p><a href="#effect-creators"><code>Effect creators</code></a></p><ul><li><a href="#takepattern"><code>take(pattern)</code></a>
-</li>
-<li><a href="#takemaybepattern"><code>take.maybe(pattern)</code></a>
-</li>
-<li><a href="#takechannel"><code>take(channel)</code></a>
-</li>
-<li><a href="#takemaybechannel"><code>take.maybe(channel)</code></a>
+<li><a href="#takeleadingchannel-saga-args"><code>takeLeading(channel, saga, ..args)</code></a>
 </li>
 <li><a href="#putaction"><code>put(action)</code></a>
 </li>
-<li><a href="#putresolveaction"><code>put.resolve(action)</code></a>
+<li><a href="#putresolveaction"><code>putResolve(action)</code></a>
 </li>
 <li><a href="#putchannel-action"><code>put(channel, action)</code></a>
 </li>
@@ -570,15 +584,21 @@
 </li>
 <li><a href="#callcontext-fnname-args"><code>call([context, fnName], ...args)</code></a>
 </li>
+<li><a href="#callcontext-fn-args-1"><code>call({context, fn}, ...args)</code></a>
+</li>
 <li><a href="#applycontext-fn-args"><code>apply(context, fn, args)</code></a>
 </li>
 <li><a href="#cpsfn-args"><code>cps(fn, ...args)</code></a>
 </li>
 <li><a href="#cpscontext-fn-args"><code>cps([context, fn], ...args)</code></a>
 </li>
+<li><a href="#cpscontext-fn-args-1"><code>cps({context, fn}, ...args)</code></a>
+</li>
 <li><a href="#forkfn-args"><code>fork(fn, ...args)</code></a>
 </li>
 <li><a href="#forkcontext-fn-args"><code>fork([context, fn], ...args)</code></a>
+</li>
+<li><a href="#forkcontext-fn-args-1"><code>fork({context, fn}, ...args)</code></a>
 </li>
 <li><a href="#spawnfn-args"><code>spawn(fn, ...args)</code></a>
 </li>
@@ -586,11 +606,11 @@
 </li>
 <li><a href="#jointask"><code>join(task)</code></a>
 </li>
-<li><a href="#jointasks"><code>join(...tasks)</code></a>
+<li><a href="#jointasks"><code>join([...tasks])</code></a>
 </li>
 <li><a href="#canceltask"><code>cancel(task)</code></a>
 </li>
-<li><a href="#canceltasks"><code>cancel(...tasks)</code></a>
+<li><a href="#canceltasks"><code>cancel([...tasks])</code></a>
 </li>
 <li><a href="#cancel"><code>cancel()</code></a>
 </li>
@@ -605,6 +625,18 @@
 <li><a href="#setcontextprops"><code>setContext(props)</code></a>
 </li>
 <li><a href="#getcontextprop"><code>getContext(prop)</code></a>
+</li>
+<li><a href="#delayms-val"><code>delay(ms, [val])</code></a>
+</li>
+<li><a href="#throttlems-pattern-saga-args"><code>throttle(ms, pattern, saga, ..args)</code></a>
+</li>
+<li><a href="#throttlems-channel-saga-args"><code>throttle(ms, channel, saga, ..args)</code></a>
+</li>
+<li><a href="#debouncems-pattern-saga-args"><code>debounce(ms, pattern, saga, ..args)</code></a>
+</li>
+<li><a href="#debouncems-channel-saga-args"><code>debounce(ms, channel, saga, ..args)</code></a>
+</li>
+<li><a href="#retrymaxtries-delay-fn-args"><code>retry(maxTries, delay, fn, ...args)</code></a>
 </li></ul>
 </li>
 <li><p><a href="#effect-combinators"><code>Effect combinators</code></a></p><ul><li><a href="#raceeffects"><code>race(effects)</code></a>
@@ -634,8 +666,6 @@
 </li>
 <li><a href="#buffers"><code>buffers</code></a>
 </li>
-<li><a href="#delayms-val"><code>delay(ms, [val])</code></a>
-</li>
 <li><a href="#cloneablegeneratorgeneratorfunc"><code>cloneableGenerator(generatorFunc)</code></a>
 </li>
 <li><a href="#createmocktask"><code>createMockTask()</code></a>
@@ -643,21 +673,10 @@
 </li></ul>
 <h1 id="cheatsheets">Cheatsheets</h1><ul><li><a href="#blocking--non-blocking">Blocking / Non-blocking</a>
 </li></ul>
-<h2 id="middleware-api">Middleware API</h2><h3 id="createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></h3><p>Creates a Redux middleware and connects the Sagas to the Redux Store</p><ul><li><p><code>options: Object</code> - A list of options to pass to the middleware. Currently supported options are:</p><ul><li><p><code>sagaMonitor</code> : <a href="#sagamonitor">SagaMonitor</a> - If a Saga Monitor is provided, the middleware will deliver monitoring events to the monitor.</p></li>
-<li><p><code>emitter</code> : Used to feed actions from redux to redux-saga (through redux middleware). Emitter is a higher order function, which takes a builtin emitter and returns another emitter.</p><p><strong>Example</strong></p><p>In the following example we create an emitter which &quot;unpacks&quot; array of actions and emits individual actions extracted from the array.</p><pre><code class="lang-javascript"> <span class="token function">createSagaMiddleware</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
-   emitter<span class="token punctuation">:</span> emit <span class="token operator">=</span><span class="token operator">&gt;</span> action <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
-    <span class="token keyword">if</span> <span class="token punctuation">(</span>Array<span class="token punctuation">.</span><span class="token function">isArray</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-      action<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span>emit<span class="token punctuation">)</span><span class="token punctuation">;</span>
-      <span class="token keyword">return</span>
-    <span class="token punctuation">}</span>
-    <span class="token function">emit</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span><span class="token punctuation">;</span>
-   <span class="token punctuation">}</span>
- <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-<ul><li><code>logger</code> : Function -  defines a custom logger for the middleware. By default, the middleware logs all errors and
-warnings to the console. This option tells the middleware to send errors/warnings to the provided logger instead. The logger is called with the params <code>(level, ...args)</code>. The 1st indicates the level of the log (&apos;info&apos;, &apos;warning&apos; or &apos;error&apos;). The rest corresponds to the following arguments (You can use <code>args.join(&apos; &apos;)</code> to concatenate all args into a single String).
-</li></ul>
-</li>
-<li><p><code>onError</code> : Function - if provided, the middleware will call it with uncaught errors from Sagas. useful for sending uncaught exceptions to error tracking services.</p></li></ul>
+<h2 id="middleware-api">Middleware API</h2><h3 id="createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></h3><p>Creates a Redux middleware and connects the Sagas to the Redux Store</p><ul><li><p><code>options: Object</code> - A list of options to pass to the middleware. Currently supported options are:</p><ul><li><p><code>context: Object</code> - initial value of the saga&apos;s context.</p></li>
+<li><p><code>sagaMonitor</code> : <a href="#sagamonitor">SagaMonitor</a> - If a Saga Monitor is provided, the middleware will deliver monitoring events to the monitor.</p></li>
+<li><p><code>onError: (error: Error, { sagaStack: string })</code> - if provided, the middleware will call it with uncaught errors from Sagas. useful for sending uncaught exceptions to error tracking services.</p></li>
+<li><p><code>effectMiddlewares</code> : Function [] - allows you to intercept any effect, resolve it on your own and pass to the next middleware. See <a href="../advanced/Testing.html#effectmiddlwares">this section</a> for a detailed example</p></li></ul>
 </li></ul>
 <h4 id="example">Example</h4><p>Below we will create a function <code>configureStore</code> which will enhance the Store with a new method <code>runSaga</code>. Then in our main module, we will use the method to start the root Saga of the application.</p><p><strong>configureStore.js</strong></p><pre><code class="lang-javascript"><span class="token keyword">import</span> createSagaMiddleware from <span class="token string">&apos;redux-saga&apos;</span>
 <span class="token keyword">import</span> reducer from <span class="token string">&apos;./path/to/reducer&apos;</span>
@@ -680,11 +699,25 @@ store<span class="token punctuation">.</span><span class="token function">runSag
 </li>
 <li><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code>: arguments to be provided to <code>saga</code>
 </li></ul>
-<p>The method returns a <a href="#task-descriptor">Task descriptor</a>.</p><h4 id="notes">Notes</h4><p><code>saga</code> must be a function which returns a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator" target="_blank">Generator Object</a>. The middleware will then iterate over the Generator and execute all yielded Effects.</p><p><code>saga</code> may also start other sagas using the various Effects provided by the library. The iteration process described below is also applied to all child sagas.</p><p>In the first iteration, the middleware invokes the <code>next()</code> method to retrieve the next Effect. The middleware then executes the yielded Effect as specified by the Effects API below. Meanwhile, the Generator will be suspended until the effect execution terminates. Upon receiving the result of the execution, the middleware calls <code>next(result)</code> on the Generator passing it the retrieved result as an argument. This process is repeated until the Generator terminates normally or by throwing some error.</p><p>If the execution results in an error (as specified by each Effect creator) then the <code>throw(error)</code> method of the Generator is called instead. If the Generator function defines a <code>try/catch</code> surrounding the current yield instruction, then the <code>catch</code> block will be invoked by the underlying Generator runtime. The runtime will also invoke any corresponding finally block.</p><p>In the case a Saga is cancelled (either manually or using the provided Effects), the middleware will invoke <code>return()</code> method of the Generator. This will cause the Generator to skip directly to the finally block.</p><h2 id="saga-helpers">Saga Helpers</h2><blockquote><p>Note: the following functions are helper functions built on top of the Effect creators
-below.</p></blockquote><h3 id="takeeverypattern-saga-args"><code>takeEvery(pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on each action dispatched to the Store that matches <code>pattern</code>.</p><ul><li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
+<p>The method returns a <a href="#task-descriptor">Task descriptor</a>.</p><h4 id="notes">Notes</h4><p><code>saga</code> must be a function which returns a <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator" target="_blank">Generator Object</a>. The middleware will then iterate over the Generator and execute all yielded Effects.</p><p><code>saga</code> may also start other sagas using the various Effects provided by the library. The iteration process described below is also applied to all child sagas.</p><p>In the first iteration, the middleware invokes the <code>next()</code> method to retrieve the next Effect. The middleware then executes the yielded Effect as specified by the Effects API below. Meanwhile, the Generator will be suspended until the effect execution terminates. Upon receiving the result of the execution, the middleware calls <code>next(result)</code> on the Generator passing it the retrieved result as an argument. This process is repeated until the Generator terminates normally or by throwing some error.</p><p>If the execution results in an error (as specified by each Effect creator) then the <code>throw(error)</code> method of the Generator is called instead. If the Generator function defines a <code>try/catch</code> surrounding the current yield instruction, then the <code>catch</code> block will be invoked by the underlying Generator runtime. The runtime will also invoke any corresponding finally block.</p><p>In the case a Saga is cancelled (either manually or using the provided Effects), the middleware will invoke <code>return()</code> method of the Generator. This will cause the Generator to skip directly to the finally block.</p><h2 id="effect-creators">Effect creators</h2><blockquote><p>Notes:</p><ul><li>Each function below returns a plain JavaScript object and does not perform any execution.
+</li>
+<li>The execution is performed by the middleware during the Iteration process described above.
+</li>
+<li>The middleware examines each Effect description and performs the appropriate action.
+</li></ul>
+</blockquote><h3 id="takepattern"><code>take(pattern)</code></h3><p>Creates an Effect description that instructs the middleware to wait for a specified action on the Store.
+The Generator is suspended until an action that matches <code>pattern</code> is dispatched.</p><p>The result of <code>yield take(pattern)</code> is an action object being dispatched.</p><p><code>pattern</code> is interpreted using the following rules:</p><ul><li><p>If <code>take</code> is called with no arguments or <code>&apos;*&apos;</code> all dispatched actions are matched (e.g. <code>take()</code> will match all actions)</p></li>
+<li><p>If it is a function, the action is matched if <code>pattern(action)</code> is true (e.g. <code>take(action =&gt; action.entities)</code> will match all actions having a (truthy) <code>entities</code> field.)</p><blockquote><p>Note: if the pattern function has <code>toString</code> defined on it, <code>action.type</code> will be tested against <code>pattern.toString()</code> instead. This is useful if you&apos;re using an action creator library like redux-act or redux-actions.</p></blockquote></li>
+<li><p>If it is a String, the action is matched if <code>action.type === pattern</code> (e.g. <code>take(INCREMENT_ASYNC)</code></p></li>
+<li><p>If it is an array, each item in the array is matched with aforementioned rules, so the mixed array of strings and function predicates is supported. The most common use case is an array of strings though, so that <code>action.type</code> is matched against all items in the array (e.g. <code>take([INCREMENT, DECREMENT])</code> and that would match either actions of type <code>INCREMENT</code> or <code>DECREMENT</code>).</p></li></ul>
+<p>The middleware provides a special action <code>END</code>. If you dispatch the END action, then all Sagas blocked on a take Effect will be terminated regardless of the specified pattern. If the terminated Saga has still some forked tasks which are still running, it will wait for all the child tasks to terminate before terminating the Task.</p><h3 id="takemaybepattern"><code>takeMaybe(pattern)</code></h3><p>Same as <code>take(pattern)</code> but does not automatically terminate the Saga on an <code>END</code> action. Instead all Sagas blocked on a take Effect will get the <code>END</code> object.</p><h4 id="notes">Notes</h4><p><code>takeMaybe</code> got its name from the FP analogy - it&apos;s like instead of having a return type of <code>ACTION</code> (with automatic handling) we can have a type of <code>Maybe(ACTION)</code> so we can handle both cases:</p><ul><li>case when there is a <code>Just(ACTION)</code> (we have an action)
+</li>
+<li><p>the case of <code>NOTHING</code> (channel was closed*). i.e. we need some way to map over <code>END</code></p></li>
+<li><p>internally all <code>dispatch</code>ed actions are going through the <code>stdChannel</code> which is getting closed when <code>dispatch(END)</code> happens</p></li></ul>
+<h3 id="takechannel"><code>take(channel)</code></h3><p>Creates an Effect description that instructs the middleware to wait for a specified message from the provided Channel. If the channel is already closed, then the Generator will immediately terminate following the same process described above for <code>take(pattern)</code>.</p><h3 id="takemaybechannel"><code>takeMaybe(channel)</code></h3><p>Same as <code>take(channel)</code> but does not automatically terminate the Saga on an <code>END</code> action. Instead all Sagas blocked on a take Effect will get the <code>END</code> object. See more <a href="#takemaybepattern">here</a></p><h3 id="takeeverypattern-saga-args"><code>takeEvery(pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on each action dispatched to the Store that matches <code>pattern</code>.</p><ul><li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
 <li><p><code>saga: Function</code> - a Generator function</p></li>
 <li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>takeEvery</code> will add the incoming action to the argument list (i.e. the action will be the last argument provided to <code>saga</code>)</p></li></ul>
-<h4 id="example">Example</h4><p>In the following example, we create a simple task <code>fetchUser</code>. We use <code>takeEvery</code> to start a new <code>fetchUser</code> task on each dispatched <code>USER_REQUESTED</code> action:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> takeEvery <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>fetchUser</code>. We use <code>takeEvery</code> to start a new <code>fetchUser</code> task on each dispatched <code>USER_REQUESTED</code> action:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> takeEvery <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchUser</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
@@ -703,15 +736,15 @@ below.</p></blockquote><h3 id="takeeverypattern-saga-args"><code>takeEvery(patte
 action is dispatched, a new <code>fetchUser</code> task is started even if a previous <code>fetchUser</code> is still pending
 (for example, the user clicks on a <code>Load User</code> button 2 consecutive times at a rapid rate, the 2nd
 click will dispatch a <code>USER_REQUESTED</code> action while the <code>fetchUser</code> fired on the first one hasn&apos;t yet terminated)</p><p><code>takeEvery</code> doesn&apos;t handle out of order responses from tasks. There is no guarantee that the tasks will
-termiate in the same order they were started. To handle out of order responses, you may consider <code>takeLatest</code>
+terminate in the same order they were started. To handle out of order responses, you may consider <code>takeLatest</code>
 below.</p><h3 id="takeeverychannel-saga-args"><code>takeEvery(channel, saga, ...args)</code></h3><p>You can also pass in a channel as argument and the behaviour is the same as <a href="#takeeverypattern-saga-args">takeEvery(pattern, saga, ...args)</a>.</p><h3 id="takelatestpattern-saga-args"><code>takeLatest(pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on each action dispatched to the Store that matches <code>pattern</code>. And automatically cancels
-any previous <code>saga</code> task started previous if it&apos;s still running.</p><p>Each time an action is dispatched to the store. And if this action matches <code>pattern</code>, <code>takeLatest</code>
+any previous <code>saga</code> task started previously if it&apos;s still running.</p><p>Each time an action is dispatched to the store. And if this action matches <code>pattern</code>, <code>takeLatest</code>
 starts a new <code>saga</code> task in the background. If a <code>saga</code> task was started previously (on the last action dispatched
 before the actual action), and if this task is still running, the task will be cancelled.</p><ul><li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
 <li><p><code>saga: Function</code> - a Generator function</p></li>
 <li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>takeLatest</code> will add the
 incoming action to the argument list (i.e. the action will be the last argument provided to <code>saga</code>)</p></li></ul>
-<h4 id="example">Example</h4><p>In the following example, we create a simple task <code>fetchUser</code>. We use <code>takeLatest</code> to
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>fetchUser</code>. We use <code>takeLatest</code> to
 start a new <code>fetchUser</code> task on each dispatched <code>USER_REQUESTED</code> action. Since <code>takeLatest</code>
 cancels any pending task started previously, we ensure that if a user triggers multiple consecutive
 <code>USER_REQUESTED</code> actions rapidly, we&apos;ll only conclude with the latest action</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> takeLatest <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
@@ -733,52 +766,34 @@ cancels any pending task started previously, we ensure that if a user triggers m
     lastTask <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>saga<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">.</span><span class="token function">concat</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span><span class="token punctuation">)</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span></code></pre>
-<h3 id="takelatestchannel-saga-args"><code>takeLatest(channel, saga, ...args)</code></h3><p>You can also pass in a channel as argument and the behaviour is the same as <a href="#takelatestpattern-saga-args">takeLatest(pattern, saga, ...args)</a>.</p><h3 id="throttlems-pattern-saga-args"><code>throttle(ms, pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on an action dispatched to the Store that matches <code>pattern</code>. After spawning a task it&apos;s still accepting incoming actions into the underlaying <code>buffer</code>, keeping at most 1 (the most recent one), but in the same time holding up with spawning new task for <code>ms</code> milliseconds (hence its name - <code>throttle</code>). Purpose of this is to ignore incoming actions for a given period of time while processing a task.</p><ul><li><p><code>ms: Number</code> - length of a time window in milliseconds during which actions will be ignored after the action starts processing</p></li>
-<li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
+<h3 id="takelatestchannel-saga-args"><code>takeLatest(channel, saga, ...args)</code></h3><p>You can also pass in a channel as argument and the behaviour is the same as <a href="#takelatestpattern-saga-args">takeLatest(pattern, saga, ...args)</a>.</p><h3 id="takeleadingpattern-saga-args"><code>takeLeading(pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on each action dispatched to the Store that matches <code>pattern</code>.
+After spawning a task once, it blocks until spawned saga completes and then starts to listen for a <code>pattern</code> again.</p><p>In short, <code>takeLeading</code> is listening for the actions when it doesn&apos;t run a saga.</p><ul><li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
 <li><p><code>saga: Function</code> - a Generator function</p></li>
-<li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>throttle</code> will add the
+<li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>takeLeading</code> will add the
 incoming action to the argument list (i.e. the action will be the last argument provided to <code>saga</code>)</p></li></ul>
-<h4 id="example">Example</h4><p>In the following example, we create a simple task <code>fetchAutocomplete</code>. We use <code>throttle</code> to
-start a new <code>fetchAutocomplete</code> task on dispatched <code>FETCH_AUTOCOMPLETE</code> action. However since <code>throttle</code> ignores consecutive <code>FETCH_AUTOCOMPLETE</code> for some time, we ensure that user won&apos;t flood our server with requests.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> throttle <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>fetchUser</code>. We use <code>takeLeading</code> to
+start a new <code>fetchUser</code> task on each dispatched <code>USER_REQUESTED</code> action. Since <code>takeLeading</code>
+ignores any new coming task after it&apos;s started, we ensure that if a user triggers multiple consecutive
+<code>USER_REQUESTED</code> actions rapidly, we&apos;ll only keep on running with the leading action</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> takeLeading <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
 
-<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAutocomplete</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">const</span> autocompleteProposals <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>Api<span class="token punctuation">.</span>fetchAutocomplete<span class="token punctuation">,</span> action<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
-  <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span>type<span class="token punctuation">:</span> <span class="token string">&apos;FETCHED_AUTOCOMPLETE_PROPOSALS&apos;</span><span class="token punctuation">,</span> proposals<span class="token punctuation">:</span> autocompleteProposals<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchUser</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span>
 
-<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">throttleAutocomplete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">yield</span> <span class="token function">throttle</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">,</span> <span class="token string">&apos;FETCH_AUTOCOMPLETE&apos;</span><span class="token punctuation">,</span> fetchAutocomplete<span class="token punctuation">)</span>
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">watchLastFetchUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">takeLeading</span><span class="token punctuation">(</span><span class="token string">&apos;USER_REQUESTED&apos;</span><span class="token punctuation">,</span> fetchUser<span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
-<h4 id="notes">Notes</h4><p><code>throttle</code> is a high-level API built using <code>take</code>, <code>fork</code> and <code>actionChannel</code>. Here is how the helper could be implemented using the low-level Effects</p><pre><code class="lang-javascript"><span class="token keyword">const</span> throttle <span class="token operator">=</span> <span class="token punctuation">(</span>ms<span class="token punctuation">,</span> pattern<span class="token punctuation">,</span> task<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">const</span> throttleChannel <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">actionChannel</span><span class="token punctuation">(</span>pattern<span class="token punctuation">)</span>
-
+<h4 id="notes">Notes</h4><p><code>takeLeading</code> is a high-level API built using <code>take</code> and <code>call</code>. Here is how the helper could be implemented using the low-level Effects</p><pre><code class="lang-javascript"><span class="token keyword">const</span> takeLeading <span class="token operator">=</span> <span class="token punctuation">(</span>patternOrChannel<span class="token punctuation">,</span> saga<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">const</span> action <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>throttleChannel<span class="token punctuation">)</span>
-    <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>task<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">,</span> action<span class="token punctuation">)</span>
-    <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> ms<span class="token punctuation">)</span>
+    <span class="token keyword">const</span> action <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>patternOrChannel<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>saga<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">.</span><span class="token function">concat</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span class="token punctuation">)</span>
-</code></pre>
-<h2 id="effect-creators">Effect creators</h2><blockquote><p>Notes:</p><ul><li>Each function below returns a plain JavaScript object and does not perform any execution.
-</li>
-<li>The execution is performed by the middleware during the Iteration process described above.
-</li>
-<li>The middleware examines each Effect description and performs the appropriate action.
-</li></ul>
-</blockquote><h3 id="takepattern"><code>take(pattern)</code></h3><p>Creates an Effect description that instructs the middleware to wait for a specified action on the Store.
-The Generator is suspended until an action that matches <code>pattern</code> is dispatched.</p><p><code>pattern</code> is interpreted using the following rules:</p><ul><li><p>If <code>take</code> is called with no arguments or <code>&apos;*&apos;</code> all dispatched actions are matched (e.g. <code>take()</code> will match all actions)</p></li>
-<li><p>If it is a function, the action is matched if <code>pattern(action)</code> is true (e.g. <code>take(action =&gt; action.entities)</code> will match all actions having a (truthy) <code>entities</code>field.)</p><blockquote><p>Note: if the pattern function has <code>toString</code> defined on it, <code>action.type</code> will be tested against <code>pattern.toString()</code> instead. This is useful if you&apos;re using an action creator library like redux-act or redux-actions.</p></blockquote></li>
-<li><p>If it is a String, the action is matched if <code>action.type === pattern</code> (e.g. <code>take(INCREMENT_ASYNC)</code></p></li>
-<li><p>If it is an array, each item in the array is matched with beforementioned rules, so the mixed array of strings and function predicates is supported. The most common use case is an array of strings though, so that <code>action.type</code> is matched against all items in the array (e.g. <code>take([INCREMENT, DECREMENT])</code> and that would match either actions of type <code>INCREMENT</code> or <code>DECREMENT</code>).</p></li></ul>
-<p>The middleware provides a special action <code>END</code>. If you dispatch the END action, then all Sagas blocked on a take Effect will be terminated regardless of the specified pattern. If the terminated Saga has still some forked tasks which are still running, it will wait for all the child tasks to terminate before terminating the Task.</p><h3 id="takemaybepattern"><code>take.maybe(pattern)</code></h3><p>Same as <code>take(pattern)</code> but does not automatically terminate the Saga on an <code>END</code> action. Instead all Sagas blocked on a take Effect will get the <code>END</code> object.</p><h4 id="notes">Notes</h4><p><code>take.maybe</code> got it name from the FP analogy - it&apos;s like instead of having a return type of <code>ACTION</code> (with automatic handling) we can have a type of <code>Maybe(ACTION)</code> so we can handle both cases:</p><ul><li>case when there is a <code>Just(ACTION)</code> (we have an action)
-</li>
-<li><p>the case of <code>NOTHING</code> (channel was closed*). i.e. we need some way to map over <code>END</code></p></li>
-<li><p>internally all <code>dispatch</code>ed actions are going through the <code>stdChannel</code> which is geting closed when <code>dispatch(END)</code> happens</p></li></ul>
-<h3 id="takechannel"><code>take(channel)</code></h3><p>Creates an Effect description that instructs the middleware to wait for a specified message from the provided Channel. If the channel is already closed, then the Generator will immediately terminate following the same process described above for <code>take(pattern)</code>.</p><h3 id="takemaybechannel"><code>take.maybe(channel)</code></h3><p>Same as <code>take(channel)</code> but does not automatically terminate the Saga on an <code>END</code> action. Instead all Sagas blocked on a take Effect will get the <code>END</code> object. See more <a href="#takemaybepattern">here</a></p><h3 id="putaction"><code>put(action)</code></h3><p>Creates an Effect description that instructs the middleware to dispatch an action to the Store.
+<span class="token punctuation">}</span><span class="token punctuation">)</span></code></pre>
+<h3 id="takeleadingchannel-saga-args"><code>takeLeading(channel, saga, ...args)</code></h3><p>You can also pass in a channel as argument and the behavior is the same as <a href="#takeleadingpattern-saga-args">takeLeading(pattern, saga, ...args)</a>.</p><h3 id="putaction"><code>put(action)</code></h3><p>Creates an Effect description that instructs the middleware to dispatch an action to the Store.
 This effect is non-blocking and any errors that are thrown downstream (e.g. in a reducer) will
 not bubble back into the saga.</p><ul><li><code>action: Object</code> - <a href="http://redux.js.org/docs/api/Store.html#dispatch" target="_blank">see Redux <code>dispatch</code> documentation for complete info</a>
 </li></ul>
-<h3 id="putresolveaction"><code>put.resolve(action)</code></h3><p>Just like <a href="#putaction"><code>put</code></a> but the effect is blocking (if promise is returned from <code>dispatch</code> it will wait for its resolution) and will bubble up errors from downstream.</p><ul><li><code>action: Object</code> - <a href="http://redux.js.org/docs/api/Store.html#dispatch" target="_blank">see Redux <code>dispatch</code> documentation for complete info</a>
+<h3 id="putresolveaction"><code>putResolve(action)</code></h3><p>Just like <a href="#putaction"><code>put</code></a> but the effect is blocking (if promise is returned from <code>dispatch</code> it will wait for its resolution) and will bubble up errors from downstream.</p><ul><li><code>action: Object</code> - <a href="http://redux.js.org/docs/api/Store.html#dispatch" target="_blank">see Redux <code>dispatch</code> documentation for complete info</a>
 </li></ul>
 <h3 id="putchannel-action"><code>put(channel, action)</code></h3><p>Creates an Effect description that instructs the middleware to put an action into the provided channel.</p><ul><li><code>channel: Channel</code> - a <a href="#channel"><code>Channel</code></a> Object.
 </li>
@@ -793,43 +808,43 @@ is thrown in any of these takers it will bubble back into the saga.</p><h3 id="c
 startup Generators (passed to the middleware on startup). The parent Generator will be
 suspended until the child Generator terminates normally, in which case the parent Generator
 is resumed with the value returned by the child Generator. Or until the child aborts with some
-error, in which case an error will be thrown inside the parent Generator.</p><p>If the result is a Promise, the middleware will suspend the Generator until the Promise is
-resolved, in which case the Generator is resumed with the resolved value. or until the Promise
-is rejected, in which case an error is thrown inside the Generator.</p><p>If the result is not an Iterator object nor a Promise, the middleware will immediately return that value back to the saga,
-so that it can resume its execution synchronously.</p><p>When an error is thrown inside the Generator. If it has a <code>try/catch</code> block surrounding the
+error, in which case an error will be thrown inside the parent Generator.</p><p>If <code>fn</code> is a normal function and returns a Promise, the middleware will suspend the Generator until the Promise is
+settled. After the promise is resolved the Generator is resumed with the resolved value, or if the Promise
+is rejected an error is thrown inside the Generator.</p><p>If the result is not an Iterator object nor a Promise, the middleware will immediately return that value back to the saga,
+so that it can resume its execution synchronously.</p><p>When an error is thrown inside the Generator, if it has a <code>try/catch</code> block surrounding the
 current <code>yield</code> instruction, the control will be passed to the <code>catch</code> block. Otherwise,
 the Generator aborts with the raised error, and if this Generator was called by another
 Generator, the error will propagate to the calling Generator.</p><h3 id="callcontext-fn-args"><code>call([context, fn], ...args)</code></h3><p>Same as <code>call(fn, ...args)</code> but supports passing a <code>this</code> context to <code>fn</code>. This is useful to
-invoke object methods.</p><h3 id="callcontext-fnname-args"><code>call([context, fnName], ...args)</code></h3><p>Same as <code>call([context, fn], ...args)</code> but supports passing a <code>fn</code> as string. Useful for invoking object&apos;s methods, i.e. <code>yield call([localStorage, &apos;getItem&apos;], &apos;redux-saga&apos;)</code></p><h3 id="applycontext-fn-args"><code>apply(context, fn, [args])</code></h3><p>Alias for <code>call([context, fn], ...args)</code>.</p><h3 id="cpsfn-args"><code>cps(fn, ...args)</code></h3><p>Creates an Effect description that instructs the middleware to invoke <code>fn</code> as a Node style function.</p><ul><li><p><code>fn: Function</code> - a Node style function. i.e. a function which accepts in addition to its arguments,
+invoke object methods.</p><h3 id="callcontext-fnname-args"><code>call([context, fnName], ...args)</code></h3><p>Same as <code>call([context, fn], ...args)</code> but supports passing a <code>fn</code> as string. Useful for invoking object&apos;s methods, i.e. <code>yield call([localStorage, &apos;getItem&apos;], &apos;redux-saga&apos;)</code></p><h3 id="callcontext-fn-args"><code>call({context, fn}, ...args)</code></h3><p>Same as <code>call([context, fn], ...args)</code> but supports passing <code>context</code> and <code>fn</code> as properties of an object, i.e. <code>yield call({context: localStorage, fn: localStorage.getItem}, &apos;redux-saga&apos;)</code>. <code>fn</code> can be a string or a function.</p><h3 id="applycontext-fn-args"><code>apply(context, fn, [args])</code></h3><p>Alias for <code>call([context, fn], ...args)</code>.</p><h3 id="cpsfn-args"><code>cps(fn, ...args)</code></h3><p>Creates an Effect description that instructs the middleware to invoke <code>fn</code> as a Node style function.</p><ul><li><p><code>fn: Function</code> - a Node style function. i.e. a function which accepts in addition to its arguments,
 an additional callback to be invoked by <code>fn</code> when it terminates. The callback accepts two parameters,
 where the first parameter is used to report errors while the second is used to report successful results</p></li>
 <li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - an array to be passed as arguments for <code>fn</code></p></li></ul>
 <h4 id="notes">Notes</h4><p>The middleware will perform a call <code>fn(...arg, cb)</code>. The <code>cb</code> is a callback passed by the middleware to
 <code>fn</code>. If <code>fn</code> terminates normally, it must call <code>cb(null, result)</code> to notify the middleware
 of a successful result. If <code>fn</code> encounters some error, then it must call <code>cb(error)</code> in order to
-notify the middleware that an error has occurred.</p><p>The middleware remains suspended until <code>fn</code> terminates.</p><h3 id="cpscontext-fn-args"><code>cps([context, fn], ...args)</code></h3><p>Supports passing a <code>this</code> context to <code>fn</code> (object method invocation)</p><h3 id="forkfn-args"><code>fork(fn, ...args)</code></h3><p>Creates an Effect description that instructs the middleware to perform a <em>non-blocking call</em> on <code>fn</code></p><h4 id="arguments">Arguments</h4><ul><li><code>fn: Function</code> - A Generator function, or normal function which returns a Promise as result
+notify the middleware that an error has occurred.</p><p>The middleware remains suspended until <code>fn</code> terminates.</p><h3 id="cpscontext-fn-args"><code>cps([context, fn], ...args)</code></h3><p>Supports passing a <code>this</code> context to <code>fn</code> (object method invocation)</p><h3 id="cpscontext-fn-args"><code>cps({context, fn}, ...args)</code></h3><p>Same as <code>cps([context, fn], ...args)</code> but supports passing <code>context</code> and <code>fn</code> as properties of an object. <code>fn</code> can be a string or a function.</p><h3 id="forkfn-args"><code>fork(fn, ...args)</code></h3><p>Creates an Effect description that instructs the middleware to perform a <em>non-blocking call</em> on <code>fn</code></p><h4 id="arguments">Arguments</h4><ul><li><code>fn: Function</code> - A Generator function, or normal function which returns a Promise as result
 </li>
 <li><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - An array of values to be passed as arguments to <code>fn</code>
 </li></ul>
-<p>returns a <a href="#task">Task</a> object.</p><h4 id="note">Note</h4><p><code>fork</code>, like <code>call</code>, can be used to invoke both normal and Generator functions. But, the calls are
+<p>returns a <a href="#task">Task</a> object.</p><h4 id="notes">Notes</h4><p><code>fork</code>, like <code>call</code>, can be used to invoke both normal and Generator functions. But, the calls are
 non-blocking, the middleware doesn&apos;t suspend the Generator while waiting for the result of <code>fn</code>.
 Instead as soon as <code>fn</code> is invoked, the Generator resumes immediately.</p><p><code>fork</code>, alongside <code>race</code>, is a central Effect for managing concurrency between Sagas.</p><p>The result of <code>yield fork(fn ...args)</code> is a <a href="#task">Task</a> object.  An object with some useful
 methods and properties.</p><p>All forked tasks are <em>attached</em> to their parents. When the parent terminates the execution of its
-own body of instructions, it will wait for all forked tasks to terminate before returning.</p><p>Errors from child tasks automatically bubble up to their parents. If any forked task raises an uncaught error, then
+own body of instructions, it will wait for all forked tasks to terminate before returning.</p><h4 id="error-propagation">Error propagation</h4><p>Errors from child tasks automatically bubble up to their parents. If any forked task raises an uncaught error, then
 the parent task will abort with the child Error, and the whole Parent&apos;s execution tree (i.e. forked tasks + the
 <em>main task</em> represented by the parent&apos;s body if it&apos;s still running) will be cancelled.</p><p>Cancellation of a forked Task will automatically cancel all forked tasks that are still executing. It&apos;ll
 also cancel the current Effect where the cancelled task was blocked (if any).</p><p>If a forked task fails <em>synchronously</em> (ie: fails immediately after its execution before performing any
 async operation), then no Task is returned, instead the parent will be aborted as soon as possible (since both
-parent and child executes in parallel, the parent will abort as soon as it takes notice of the child failure).</p><p>To create <em>detached</em> forks, use <code>spawn</code> instead.</p><h3 id="forkcontext-fn-args"><code>fork([context, fn], ...args)</code></h3><p>Supports invoking forked functions with a <code>this</code> context</p><h3 id="spawnfn-args"><code>spawn(fn, ...args)</code></h3><p>Same as <code>fork(fn, ...args)</code> but creates a <em>detached</em> task. A detached task remains independent from its parent and acts like
+parent and child execute in parallel, the parent will abort as soon as it takes notice of the child failure).</p><p>To create <em>detached</em> forks, use <code>spawn</code> instead.</p><h3 id="forkcontext-fn-args"><code>fork([context, fn], ...args)</code></h3><p>Supports invoking forked functions with a <code>this</code> context</p><h3 id="forkcontext-fn-args"><code>fork({context, fn}, ...args)</code></h3><p>Same as <code>fork([context, fn], ...args)</code> but supports passing <code>context</code> and <code>fn</code> as properties of an object. <code>fn</code> can be a string or a function.</p><h3 id="spawnfn-args"><code>spawn(fn, ...args)</code></h3><p>Same as <code>fork(fn, ...args)</code> but creates a <em>detached</em> task. A detached task remains independent from its parent and acts like
 a top-level task. The parent will not wait for detached tasks to terminate before returning and all events which may affect the
 parent or the detached task are completely independents (error, cancellation).</p><h3 id="spawncontext-fn-args"><code>spawn([context, fn], ...args)</code></h3><p>Supports spawning functions with a <code>this</code> context</p><h3 id="jointask"><code>join(task)</code></h3><p>Creates an Effect description that instructs the middleware to wait for the result
 of a previously forked task.</p><ul><li><code>task: Task</code> - A <a href="#task">Task</a> object returned by a previous <code>fork</code>
 </li></ul>
 <h4 id="notes">Notes</h4><p><code>join</code> will resolve to the same outcome of the joined task (success or error). If the joined
 task is cancelled, the cancellation will also propagate to the Saga executing the join
-effect. Similarly, any potential callers of those joiners will be cancelled as well.</p><h3 id="jointasks"><code>join(...tasks)</code></h3><p>Creates an Effect description that instructs the middleware to wait for the results of previously forked tasks.</p><ul><li><code>tasks: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Task</span><span class="token punctuation">&gt;</span></span></code> - A <a href="#task">Task</a> is the object returned by a previous <code>fork</code>
+effect. Similarly, any potential callers of those joiners will be cancelled as well.</p><h3 id="jointasks"><code>join([...tasks])</code></h3><p>Creates an Effect description that instructs the middleware to wait for the results of previously forked tasks.</p><ul><li><code>tasks: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Task</span><span class="token punctuation">&gt;</span></span></code> - A <a href="#task">Task</a> is the object returned by a previous <code>fork</code>
 </li></ul>
-<h4 id="notes">Notes</h4><p>It simply wraps the array of tasks in <a href="#jointask">join effects</a>, roughly becoming the equivalent of
+<h4 id="notes">Notes</h4><p>It wraps the array of tasks in <a href="#jointask">join effects</a>, roughly becoming the equivalent of
 <code>yield tasks.map(t =&gt; join(t))</code>.</p><h3 id="canceltask"><code>cancel(task)</code></h3><p>Creates an Effect description that instructs the middleware to cancel a previously forked task.</p><ul><li><code>task: Task</code> - A <a href="#task">Task</a> object returned by a previous <code>fork</code>
 </li></ul>
 <h4 id="notes">Notes</h4><p>To cancel a running task, the middleware will invoke <code>return</code> on the underlying Generator
@@ -860,10 +875,10 @@ by attaching a <code>[CANCEL]</code> to the promise.</p><p>The following example
   <span class="token comment" spellcheck="true">// will call promise[CANCEL] on the result of myApi</span>
   <span class="token keyword">yield</span> <span class="token function">cancel</span><span class="token punctuation">(</span>task<span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
-<p>redux-saga will automatically cancel jqXHR objects using their <code>abort</code> method.</p><h3 id="canceltasks"><code>cancel(...tasks)</code></h3><p>Creates an Effect description that instructs the middleware to cancel previously forked tasks.</p><ul><li><code>tasks: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Task</span><span class="token punctuation">&gt;</span></span></code> - A <a href="#task">Task</a> is the object returned by a previous <code>fork</code>
+<p>redux-saga will automatically cancel jqXHR objects using their <code>abort</code> method.</p><h3 id="canceltasks"><code>cancel([...tasks])</code></h3><p>Creates an Effect description that instructs the middleware to cancel previously forked tasks.</p><ul><li><code>tasks: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>Task</span><span class="token punctuation">&gt;</span></span></code> - A <a href="#task">Task</a> is the object returned by a previous <code>fork</code>
 </li></ul>
-<h4 id="notes">Notes</h4><p>It simply wraps the array of tasks in <a href="#canceltask">cancel effects</a>, roughly becoming the equivalent of
-<code>yield tasks.map(t =&gt; cancel(t))</code>.</p><h3 id="cancel"><code>cancel()</code></h3><p>Creates an Effect description that instructs the middleware to cancel a task in which it has been yielded (self cancellation).
+<h4 id="notes">Notes</h4><p>It wraps the array of tasks in <a href="#canceltask">cancel effects</a>, roughly becoming the equivalent of
+<code>yield tasks.map(t =&gt; cancel(t))</code>.</p><h3 id="cancel"><code>cancel()</code></h3><p>Creates an Effect description that instructs the middleware to cancel a task in which it has been yielded (self-cancellation).
 It allows to reuse destructor-like logic inside a <code>finally</code> blocks for both outer (<code>cancel(task)</code>) and self (<code>cancel()</code>) cancellations.</p><h4 id="example">Example</h4><pre><code class="lang-javascript"><span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">deleteRecord</span><span class="token punctuation">(</span><span class="token punctuation">{</span> payload <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">try</span> <span class="token punctuation">{</span>
     <span class="token keyword">const</span> <span class="token punctuation">{</span> confirm<span class="token punctuation">,</span> deny <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>prompt<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -919,7 +934,7 @@ already computed by the Store).</p><p>For example, suppose we have this state sh
 </li>
 <li><code>buffer: Buffer</code> - a <a href="#buffer">Buffer</a> object
 </li></ul>
-<h4 id="example">Example</h4><p>The following code creates channel to buffer all <code>USER_REQUEST</code> actions. Note that even the Saga maybe blocked
+<h4 id="example">Example</h4><p>The following code creates a channel to buffer all <code>USER_REQUEST</code> actions. Note that even the Saga may be blocked
 on the <code>call</code> effect. All actions that come while it&apos;s blocked are automatically buffered. This causes the Saga
 to execute the API calls one at a time</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> actionChannel<span class="token punctuation">,</span> call <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 <span class="token keyword">import</span> api from <span class="token string">&apos;...&apos;</span>
@@ -960,8 +975,89 @@ you use this Effect in a finally block to run Cancellation specific code</p><h4 
     <span class="token comment" spellcheck="true">// logic that should execute in all situations (e.g. closing a channel)</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<h3 id="setcontextprops"><code>setContext(props)</code></h3><p>Creates an effect that instructs the middleware to update it&apos;s own context. This effect extends
-saga&apos;s context instead of replacing it.</p><h3 id="getcontextprop"><code>getContext(prop)</code></h3><p>Creates an effect that instructs the middleware to return a specific property of saga&apos;s context.</p><h2 id="effect-combinators">Effect combinators</h2><h3 id="raceeffects"><code>race(effects)</code></h3><p>Creates an Effect description that instructs the middleware to run a <em>Race</em> between
+<h3 id="setcontextprops"><code>setContext(props)</code></h3><p>Creates an effect that instructs the middleware to update its own context. This effect extends
+saga&apos;s context instead of replacing it.</p><h3 id="getcontextprop"><code>getContext(prop)</code></h3><p>Creates an effect that instructs the middleware to return a specific property of saga&apos;s context.</p><h3 id="delayms-val"><code>delay(ms, [val])</code></h3><p>Returns an effect descriptor to block execution for <code>ms</code> milliseconds and return <code>val</code> value.</p><h3 id="throttlems-pattern-saga-args"><code>throttle(ms, pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on an action dispatched to the Store that matches <code>pattern</code>. After spawning a task it&apos;s still accepting incoming actions into the underlying <code>buffer</code>, keeping at most 1 (the most recent one), but in the same time holding up with spawning new task for <code>ms</code> milliseconds (hence its name - <code>throttle</code>). Purpose of this is to ignore incoming actions for a given period of time while processing a task.</p><ul><li><p><code>ms: Number</code> - length of a time window in milliseconds during which actions will be ignored after the action starts processing</p></li>
+<li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
+<li><p><code>saga: Function</code> - a Generator function</p></li>
+<li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>throttle</code> will add the
+incoming action to the argument list (i.e. the action will be the last argument provided to <code>saga</code>)</p></li></ul>
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>fetchAutocomplete</code>. We use <code>throttle</code> to
+start a new <code>fetchAutocomplete</code> task on dispatched <code>FETCH_AUTOCOMPLETE</code> action. However since <code>throttle</code> ignores consecutive <code>FETCH_AUTOCOMPLETE</code> for some time, we ensure that user won&apos;t flood our server with requests.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> throttle <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
+
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAutocomplete</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> autocompleteProposals <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>Api<span class="token punctuation">.</span>fetchAutocomplete<span class="token punctuation">,</span> action<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span>type<span class="token punctuation">:</span> <span class="token string">&apos;FETCHED_AUTOCOMPLETE_PROPOSALS&apos;</span><span class="token punctuation">,</span> proposals<span class="token punctuation">:</span> autocompleteProposals<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">throttleAutocomplete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">throttle</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">,</span> <span class="token string">&apos;FETCH_AUTOCOMPLETE&apos;</span><span class="token punctuation">,</span> fetchAutocomplete<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<h4 id="notes">Notes</h4><p><code>throttle</code> is a high-level API built using <code>take</code>, <code>fork</code> and <code>actionChannel</code>. Here is how the helper could be implemented using the low-level Effects</p><pre><code class="lang-javascript"><span class="token keyword">const</span> throttle <span class="token operator">=</span> <span class="token punctuation">(</span>ms<span class="token punctuation">,</span> pattern<span class="token punctuation">,</span> task<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> throttleChannel <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">actionChannel</span><span class="token punctuation">(</span>pattern<span class="token punctuation">,</span> buffers<span class="token punctuation">.</span><span class="token function">sliding</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+  <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> action <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>throttleChannel<span class="token punctuation">)</span>
+    <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>task<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">,</span> action<span class="token punctuation">)</span>
+    <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span>ms<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span></code></pre>
+<h3 id="throttlems-channel-saga-args"><code>throttle(ms, channel, saga, ...args)</code></h3><p>You can also handel a channel as argument and the behaviour is the same as <a href="#throttlems-pattern-saga-args"><code>throttle(ms, pattern, saga, ..args)</code></a></p><h3 id="debouncems-pattern-saga-args"><code>debounce(ms, pattern, saga, ...args)</code></h3><p>Spawns a <code>saga</code> on an action dispatched to the Store that matches <code>pattern</code>. Saga will be called after it stops taking <code>pattern</code> actions for <code>ms</code> milliseconds. Purpose of this is to prevent calling saga until the actions are settled off.</p><ul><li><p><code>ms: Number</code> - defines how many milliseconds should elapse since the last time <code>pattern</code> action was fired to call the <code>saga</code></p></li>
+<li><p><code>pattern: String | Array | Function</code> - for more information see docs for <a href="#takepattern"><code>take(pattern)</code></a></p></li>
+<li><p><code>saga: Function</code> - a Generator function</p></li>
+<li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be passed to the started task. <code>debounce</code> will add the
+incoming action to the argument list (i.e. the action will be the last argument provided to <code>saga</code>)</p></li></ul>
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>fetchAutocomplete</code>. We use <code>debounce</code> to
+delay calling <code>fetchAutocomplete</code> saga until we stop receive any <code>FETCH_AUTOCOMPLETE</code> events for at least <code>1000</code> ms.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> debounce <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
+
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAutocomplete</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> autocompleteProposals <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>Api<span class="token punctuation">.</span>fetchAutocomplete<span class="token punctuation">,</span> action<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span>type<span class="token punctuation">:</span> <span class="token string">&apos;FETCHED_AUTOCOMPLETE_PROPOSALS&apos;</span><span class="token punctuation">,</span> proposals<span class="token punctuation">:</span> autocompleteProposals<span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">debounceAutocomplete</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">yield</span> <span class="token function">debounce</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">,</span> <span class="token string">&apos;FETCH_AUTOCOMPLETE&apos;</span><span class="token punctuation">,</span> fetchAutocomplete<span class="token punctuation">)</span>
+<span class="token punctuation">}</span></code></pre>
+<h4 id="notes">Notes</h4><p><code>debounce</code> is a high-level API built using <code>take</code>, <code>delay</code> and <code>fork</code>. Here is how the helper could be implemented using the low-level Effects</p><pre><code class="lang-javascript"><span class="token keyword">const</span> debounce <span class="token operator">=</span> <span class="token punctuation">(</span>ms<span class="token punctuation">,</span> pattern<span class="token punctuation">,</span> task<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token function">fork</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token operator">*</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> action <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>pattern<span class="token punctuation">)</span>
+
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> <span class="token punctuation">{</span> debounced<span class="token punctuation">,</span> _action <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">race</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        debounced<span class="token punctuation">:</span> <span class="token function">delay</span><span class="token punctuation">(</span>ms<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        _action<span class="token punctuation">:</span> <span class="token function">take</span><span class="token punctuation">(</span>pattern<span class="token punctuation">)</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>debounced<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>worker<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">,</span> action<span class="token punctuation">)</span>
+        <span class="token keyword">break</span>
+      <span class="token punctuation">}</span>
+
+      action <span class="token operator">=</span> _action
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span></code></pre>
+<h3 id="debouncems-channel-saga-args"><code>debounce(ms, channel, saga, ...args)</code></h3><p>You can also handel a channel as argument and the behaviour is the same as <a href="#debouncems-pattern-saga-args"><code>debounce(ms, pattern, saga, ..args)</code></a></p><h3 id="retrymaxtries-delay-fn-args"><code>retry(maxTries, delay, fn, ...args)</code></h3><p>Creates an Effect description that instructs the middleware to call the function <code>fn</code> with <code>args</code> as arguments.
+In case of failure will try to make another call after <code>delay</code> milliseconds, if a number of attempts &lt; <code>maxTries</code>.</p><ul><li><code>maxTries: Number</code> - maximum calls count.
+</li>
+<li><code>delay: Number</code> - length of a time window in milliseconds between <code>fn</code> calls.
+</li>
+<li><code>fn: Function</code> - A Generator function, or normal function which either returns a Promise as a result, or any other value.
+</li>
+<li><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - An array of values to be passed as arguments to <code>fn</code>
+</li></ul>
+<h4 id="example">Example</h4><p>In the following example, we create a basic task <code>retrySaga</code>. We use <code>retry</code> to try to fetch our API 3 times with 10 second interval. If <code>request</code> fails first time than <code>retry</code> will call <code>request</code> one more time while calls count less than 3.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> put<span class="token punctuation">,</span> retry <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> request <span class="token punctuation">}</span> from <span class="token string">&apos;some-api&apos;</span><span class="token punctuation">;</span>
+
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">retrySaga</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">try</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> SECOND <span class="token operator">=</span> <span class="token number">1000</span>
+    <span class="token keyword">const</span> response <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">retry</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">,</span> <span class="token number">10</span> <span class="token operator">*</span> SECOND<span class="token punctuation">,</span> request<span class="token punctuation">,</span> data<span class="token punctuation">)</span>
+    <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span> type<span class="token punctuation">:</span> <span class="token string">&apos;REQUEST_SUCCESS&apos;</span><span class="token punctuation">,</span> payload<span class="token punctuation">:</span> response <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span> type<span class="token punctuation">:</span> <span class="token string">&apos;REQUEST_FAIL&apos;</span><span class="token punctuation">,</span> payload<span class="token punctuation">:</span> <span class="token punctuation">{</span> error <span class="token punctuation">}</span> <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<h4 id="notes">Notes</h4><p><code>retry</code> is a high-level API built using <code>delay</code> and <code>call</code>. <a href="../recipes#retrying-xhr-calls">Here is how the helper could be implemented using the low-level Effects</a></p><h2 id="effect-combinators">Effect combinators</h2><h3 id="raceeffects"><code>race(effects)</code></h3><p>Creates an Effect description that instructs the middleware to run a <em>Race</em> between
 multiple Effects (this is similar to how <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise/race" target="_blank"><code>Promise.race([...])</code></a> behaves).</p><p><code>effects: Object</code> - a dictionary Object of the form {label: effect, ...}</p><h4 id="example">Example</h4><p>The following example runs a race between two effects:</p><ol><li>A call to a function <code>fetchUsers</code> which returns a Promise
 </li>
 <li>A <code>CANCEL_FETCH</code> action which may be eventually dispatched on the Store
@@ -969,7 +1065,7 @@ multiple Effects (this is similar to how <a href="https://developer.mozilla.org/
 <pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> call<span class="token punctuation">,</span> race <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
 <span class="token keyword">import</span> fetchUsers from <span class="token string">&apos;./path/to/fetchUsers&apos;</span>
 
-<span class="token keyword">function</span><span class="token operator">*</span> fetchUsersSaga <span class="token punctuation">{</span>
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchUsersSaga</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">const</span> <span class="token punctuation">{</span> response<span class="token punctuation">,</span> cancel <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">race</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
     response<span class="token punctuation">:</span> <span class="token function">call</span><span class="token punctuation">(</span>fetchUsers<span class="token punctuation">)</span><span class="token punctuation">,</span>
     cancel<span class="token punctuation">:</span> <span class="token function">take</span><span class="token punctuation">(</span>CANCEL_FETCH<span class="token punctuation">)</span>
@@ -977,14 +1073,14 @@ multiple Effects (this is similar to how <a href="https://developer.mozilla.org/
 <span class="token punctuation">}</span></code></pre>
 <p>If <code>call(fetchUsers)</code> resolves (or rejects) first, the result of <code>race</code> will be an object
 with a single keyed object <code>{response: result}</code> where <code>result</code> is the resolved result of <code>fetchUsers</code>.</p><p>If an action of type <code>CANCEL_FETCH</code> is dispatched on the Store before <code>fetchUsers</code> completes, the result
-will be a single keyed object <code>{cancel: action}</code>, where action is the dispatched action.</p><h4 id="notes">Notes</h4><p>When resolving a <code>race</code>, the middleware automatically cancels all the losing Effects.</p><h3 id="raceeffects-with-array"><code>race([...effects]) (with Array)</code></h3><p>The same as <a href="#raceeffects"><code>race(effects)</code></a> but let you to pass in an array of effects.</p><h4 id="example">Example</h4><p>The following example runs a race between two effects:</p><ol><li>A call to a function <code>fetchUsers</code> which returns a Promise
+will be a single keyed object <code>{cancel: action}</code>, where action is the dispatched action.</p><h4 id="notes">Notes</h4><p>When resolving a <code>race</code>, the middleware automatically cancels all the losing Effects.</p><h3 id="raceeffects-with-array"><code>race([...effects]) (with Array)</code></h3><p>The same as <a href="#raceeffects"><code>race(effects)</code></a> but lets you pass in an array of effects.</p><h4 id="example">Example</h4><p>The following example runs a race between two effects:</p><ol><li>A call to a function <code>fetchUsers</code> which returns a Promise
 </li>
 <li>A <code>CANCEL_FETCH</code> action which may be eventually dispatched on the Store
 </li></ol>
 <pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> call<span class="token punctuation">,</span> race <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
 <span class="token keyword">import</span> fetchUsers from <span class="token string">&apos;./path/to/fetchUsers&apos;</span>
 
-<span class="token keyword">function</span><span class="token operator">*</span> fetchUsersSaga <span class="token punctuation">{</span>
+<span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchUsersSaga</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">const</span> <span class="token punctuation">[</span>response<span class="token punctuation">,</span> cancel<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">race</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
     <span class="token function">call</span><span class="token punctuation">(</span>fetchUsers<span class="token punctuation">)</span><span class="token punctuation">,</span>
     <span class="token function">take</span><span class="token punctuation">(</span>CANCEL_FETCH<span class="token punctuation">)</span>
@@ -1001,7 +1097,7 @@ in parallel and wait for all of them to complete. It&apos;s quite the correspond
     <span class="token function">call</span><span class="token punctuation">(</span>fetchProducts<span class="token punctuation">)</span>
   <span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
-<h3 id="alleffects"><code>all(effects)</code></h3><p>The same as <a href="#alleffects-parallel-effects"><code>all([...effects])</code></a> but let&apos;s you to pass in a dictionary object of effects with labels, just like <a href="#alleffects"><code>race(effects)</code></a></p><ul><li><code>effects: Object</code> - a dictionary Object of the form {label: effect, ...}
+<h3 id="alleffects"><code>all(effects)</code></h3><p>The same as <a href="#alleffects-parallel-effects"><code>all([...effects])</code></a> but lets you to pass in a dictionary object of effects with labels, just like <a href="#alleffects"><code>race(effects)</code></a></p><ul><li><code>effects: Object</code> - a dictionary Object of the form {label: effect, ...}
 </li></ul>
 <h4 id="example">Example</h4><p>The following example runs two blocking calls in parallel:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> fetchCustomers<span class="token punctuation">,</span> fetchProducts <span class="token punctuation">}</span> from <span class="token string">&apos;./path/to/api&apos;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> all<span class="token punctuation">,</span> call <span class="token punctuation">}</span> from `redux<span class="token operator">-</span>saga<span class="token operator">/</span>effects`
@@ -1036,7 +1132,7 @@ in parallel and wait for all of them to complete. It&apos;s quite the correspond
     <td>task thrown error. `undefined` if task is still running</td>
   </tr>
   <tr>
-    <td>task.done</td>
+    <td>task.toPromise()</td>
     <td>
       a Promise which is either:
         <ul>
@@ -1071,22 +1167,27 @@ in parallel and wait for all of them to complete. It&apos;s quite the correspond
 </li></ul>
 <p><code>Channel.close():</code> closes the channel which means no more puts will be allowed. All pending takers will be invoked with <code>END</code>.</p><h3 id="buffer">Buffer</h3><p>Used to implement the buffering strategy for a channel. The Buffer interface defines 3 methods: <code>isEmpty</code>, <code>put</code> and <code>take</code></p><ul><li><code>isEmpty()</code>: returns true if there are no messages on the buffer. A channel calls this method whenever a new taker is registered
 </li>
-<li><code>put(message)</code>: used to put new message in the buffer. Note the Buffer can chose to not store the message
+<li><code>put(message)</code>: used to put new message in the buffer. Note the Buffer can choose to not store the message
 (e.g. a dropping buffer can drop any new message exceeding a given limit)
 </li>
 <li><code>take()</code> used to retrieve any buffered message. Note the behavior of this method has to be consistent with <code>isEmpty</code>
 </li></ul>
-<h3 id="sagamonitor">SagaMonitor</h3><p>Used by the middleware to dispatch monitoring events. Actually the middleware dispatches 5 events:</p><ul><li><p>When an effect is triggered (via <code>yield someEffect</code>) the middleware invokes <code>sagaMonitor.effectTriggered</code></p></li>
+<h3 id="sagamonitor">SagaMonitor</h3><p>Used by the middleware to dispatch monitoring events. Actually the middleware dispatches 6 events:</p><ul><li><p>When a root saga is started (via <code>runSaga</code> or <code>sagaMiddleware.run</code>) the middleware invokes <code>sagaMonitor.rootSagaStarted</code></p></li>
+<li><p>When an effect is triggered (via <code>yield someEffect</code>) the middleware invokes <code>sagaMonitor.effectTriggered</code></p></li>
 <li><p>If the effect is resolved with success the middleware invokes <code>sagaMonitor.effectResolved</code></p></li>
 <li><p>If the effect is rejected with an error the middleware invokes <code>sagaMonitor.effectRejected</code></p></li>
 <li><p>If the effect is cancelled the middleware invokes <code>sagaMonitor.effectCancelled</code></p></li>
 <li><p>Finally, the middleware invokes <code>sagaMonitor.actionDispatched</code> when a Redux action is dispatched.</p></li></ul>
-<p>Below the signature for each method</p><ul><li><p><code>effectTriggered(options)</code> : where options is an object with the following fields</p><ul><li><p><code>effectId</code> : Number - Unique ID assigned to the yielded effect</p></li>
+<p>Below the signature for each method</p><ul><li><p><code>sagaMonitor.rootSagaStarted(options)</code> : where options is an object with the following fields</p><ul><li><p><code>effectId</code> : Number - Unique ID assigned to this root saga execution</p></li>
+<li><p><code>saga</code> : Function - The generator function that starts to run</p></li>
+<li><p><code>args</code> : Array - The arguments passed to the generator function</p></li></ul>
+</li></ul>
+<ul><li><p><code>effectTriggered(options)</code></p><ul><li><p><code>effectId</code> : Number - Unique ID assigned to the yielded effect</p></li>
 <li><p><code>parentEffectId</code> : Number - ID of the parent Effect. In the case of a <code>race</code> or <code>parallel</code> effect, all
 effects yielded inside will have the direct race/parallel effect as a parent. In case of a top-level effect, the
 parent will be the containing Saga</p></li>
-<li><p><code>label</code> : String - In case of a <code>race</code> effect, all child effects will be assigned as label the corresponding
-keys of the object passed to <code>race</code></p></li>
+<li><p><code>label</code> : String - In case of a <code>race</code>/<code>all</code> effect, all child effects will be assigned as label the corresponding
+keys of the object passed to <code>race</code>/<code>all</code></p></li>
 <li><p><code>effect</code> : Object - the yielded effect itself</p></li></ul>
 </li></ul>
 <ul><li><p><code>effectResolved(effectId, result)</code></p><ul><li><p><code>effectId</code> : Number - The ID of the yielded effect</p></li>
@@ -1101,33 +1202,29 @@ the result will be a <code>Task</code> object.</p></li></ul>
 </li>
 <li><p><code>actionDispatched(action)</code></p><ul><li><code>action</code> : Object - The dispatched Redux action. If the action was dispatched by a Saga
 then the action will have a property <code>SAGA_ACTION</code> set to true (<code>SAGA_ACTION</code> can be imported from
-<code>redux-saga/utils</code>).
+<code>@redux-saga/symbols</code>).
 </li></ul>
 </li></ul>
 <h2 id="external-api">External API</h2><hr><h3 id="runsagaoptions-saga-args"><code>runSaga(options, saga, ...args)</code></h3><p>Allows starting sagas outside the Redux middleware environment. Useful if you want to
-connect a Saga to external input/output, other than store actions.</p><p><code>runSaga</code> returns a Task object. Just like the one returned from a <code>fork</code> effect.</p><ul><li><p><code>options: Object</code> - currently supported options are:</p><ul><li><p><code>subscribe(callback): Function</code> - A function which accepts a callback and returns an <code>unsubscribe</code> function</p><ul><li><code>callback(input): Function</code> - callback(provided by runSaga) used to subscribe to input events. <code>subscribe</code> must support registering multiple subscriptions.
-<ul><li><code>input: any</code> - argument passed by <code>subscribe</code> to <code>callback</code> (see Notes below)
-</li></ul>
-</li></ul>
-</li></ul>
-</li></ul>
-<ul><li><p><code>dispatch(output): Function</code> - used to fulfill <code>put</code> effects.</p><ul><li><code>output: any</code> -  argument provided by the Saga to the <code>put</code> Effect (see Notes below).
+connect a Saga to external input/output, other than store actions.</p><p><code>runSaga</code> returns a Task object. Just like the one returned from a <code>fork</code> effect.</p><ul><li><p><code>options: Object</code> - currently supported options are:</p><ul><li><p><code>channel</code> - see docs for <a href="#channel"><code>channel</code></a> (preferably you should use <code>stdChannel</code> here)</p></li>
+<li><p><code>dispatch(output): Function</code> - used to fulfill <code>put</code> effects.</p><ul><li><code>output: any</code> -  argument provided by the Saga to the <code>put</code> Effect (see Notes below).
 </li></ul>
 </li>
 <li><p><code>getState(): Function</code> - used to fulfill <code>select</code> and <code>getState</code> effects</p></li>
 <li><p><code>sagaMonitor</code> : <a href="#sagamonitor">SagaMonitor</a> - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li>
-<li><p><code>logger: Function</code> - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li>
-<li><p><code>onError: Function</code> - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li></ul>
-<ul><li><p><code>saga: Function</code> - a Generator function</p></li>
+<li><p><code>onError: Function</code> - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li>
+<li><p><code>context</code> : {} - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li>
+<li><p><code>effectMiddlewares</code> : Function[] - see docs for <a href="#createsagamiddlewareoptions"><code>createSagaMiddleware(options)</code></a></p></li></ul>
+</li>
+<li><p><code>saga: Function</code> - a Generator function</p></li>
 <li><p><code>args: Array<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>any</span><span class="token punctuation">&gt;</span></span></code> - arguments to be provided to <code>saga</code></p></li></ul>
-<h4 id="notes">Notes</h4><p>The <code>{subscribe, dispatch}</code> is used to fulfill <code>take</code> and <code>put</code> Effects. This defines the Input/Output
-interface of the Saga.</p><p><code>subscribe</code> is used to fulfill <code>take(PATTERN)</code> effects. It must call <code>callback</code> every time it
-has an input to dispatch (e.g. on every mouse click if the Saga is connected to DOM click events).
-Each time <code>subscribe</code> emits an input to its callbacks, if the Saga is blocked on a <code>take</code> effect, and
+<h4 id="notes">Notes</h4><p>The <code>{channel, dispatch}</code> is used to fulfill <code>take</code> and <code>put</code> Effects. This defines the Input/Output
+interface of the Saga.</p><p><code>channel</code> is used to fulfill <code>take(PATTERN)</code> effects. Every time something gets put on the channel it&apos;s
+notifying all pending internal listeners. If the Saga is blocked on a <code>take</code> effect, and
 if the take pattern matches the currently incoming input, the Saga is resumed with that input.</p><p><code>dispatch</code> is used to fulfill <code>put</code> effects. Each time the Saga emits a <code>yield put(output)</code>, <code>dispatch</code>
-is invoked with output.</p><h2 id="utils">Utils</h2><h3 id="channelbuffer"><code>channel([buffer])</code></h3><p>A factory method that can be used to create Channels. You can optionally pass it a buffer
+is invoked with output.</p><p>An example how to use this API may be found <a href="../UsingRunSaga.md">here</a>.</p><h2 id="utils">Utils</h2><h3 id="channelbuffer"><code>channel([buffer])</code></h3><p>A factory method that can be used to create Channels. You can optionally pass it a buffer
 to control how the channel buffers the messages.</p><p>By default, if no buffer is provided, the channel will queue incoming messages up to 10 until interested takers are registered. The default buffering will deliver message using a FIFO strategy: a new taker will be delivered the oldest message in the buffer.</p><h3 id="eventchannelsubscribe-buffer-matcher"><code>eventChannel(subscribe, [buffer], [matcher])</code></h3><p>Creates channel that will subscribe to an event source using the <code>subscribe</code> method. Incoming events from the event source will be queued in the channel until interested takers are registered.</p><ul><li><p><code>subscribe: Function</code> used to subscribe to the underlying event source. The function must return an unsubscribe function to terminate the subscription.</p></li>
-<li><p><code>buffer: Buffer</code> optional Buffer object to buffer messages on this channel. If not provided messages will not buffered
+<li><p><code>buffer: Buffer</code> optional Buffer object to buffer messages on this channel. If not provided, messages will not be buffered
 on this channel.</p></li>
 <li><p><code>matcher: Function</code> optional predicate function (<code>any =&gt; Boolean</code>) to filter incoming messages. Only messages accepted by
 the matcher will be put on the channel.</p></li></ul>
@@ -1152,13 +1249,14 @@ the matcher will be put on the channel.</p></li></ul>
   <span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
 <h3 id="buffers"><code>buffers</code></h3><p>Provides some common buffers</p><ul><li><p><code>buffers.none()</code>: no buffering, new messages will be lost if there are no pending takers</p></li>
-<li><p><code>buffers.fixed(limit)</code>: new messages will be buffered up to <code>limit</code>. Overflow will raises an Error. Omitting a <code>limit</code> value will result in a limit of 10.</p></li>
+<li><p><code>buffers.fixed(limit)</code>: new messages will be buffered up to <code>limit</code>. Overflow will raise an Error. Omitting a <code>limit</code> value will result in a limit of 10.</p></li>
 <li><p><code>buffers.expanding(initialSize)</code>: like <code>fixed</code> but Overflow will cause the buffer to expand dynamically.</p></li>
 <li><p><code>buffers.dropping(limit)</code>: same as <code>fixed</code> but Overflow will silently drop the messages.</p></li>
 <li><p><code>buffers.sliding(limit)</code>: same as <code>fixed</code> but Overflow will insert the new message at the end and drop the oldest message in the buffer.</p></li></ul>
-<h3 id="delayms-val"><code>delay(ms, [val])</code></h3><p>Returns a Promise that will resolve after <code>ms</code> milliseconds with <code>val</code>.</p><h3 id="cloneablegeneratorgeneratorfunc"><code>cloneableGenerator(generatorFunc)</code></h3><p>Takes a generator function (function*) and returns a generator function.
+<h3 id="cloneablegeneratorgeneratorfunc"><code>cloneableGenerator(generatorFunc)</code></h3><p>Takes a generator function (function*) and returns a generator function.
 All generators instanciated from this function will be cloneable.
-For testing purpose only.</p><h4 id="example">Example</h4><p>This is useful when you want to test different branch of a saga without having to replay the actions that lead to it.</p><pre><code class="lang-javascript">
+For testing purpose only.</p><h4 id="example">Example</h4><p>This is useful when you want to test a different branch of a saga without having to replay the actions that lead to it.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> cloneableGenerator <span class="token punctuation">}</span> from <span class="token string">&apos;@redux-saga/testing-utils&apos;</span><span class="token punctuation">;</span>
+
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">oddOrEven</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// some stuff are done here</span>
   <span class="token keyword">yield</span> <span class="token number">1</span><span class="token punctuation">;</span>
@@ -1208,7 +1306,7 @@ For testing purpose only.</p><h4 id="example">Example</h4><p>This is useful when
     a<span class="token punctuation">.</span><span class="token function">equal</span><span class="token punctuation">(</span>
       data<span class="token punctuation">.</span>gen<span class="token punctuation">.</span><span class="token function">next</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">.</span>value<span class="token punctuation">,</span>
       <span class="token string">&apos;even&apos;</span><span class="token punctuation">,</span>
-      <span class="token string">&apos;it should yield &quot;event&quot;&apos;</span>
+      <span class="token string">&apos;it should yield &quot;even&quot;&apos;</span>
     <span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     a<span class="token punctuation">.</span><span class="token function">equal</span><span class="token punctuation">(</span>
@@ -1252,17 +1350,23 @@ For testing purposes only.
 <td>No</td>
 </tr><tr><td>takeLatest</td>
 <td>No</td>
+</tr><tr><td>takeLeading</td>
+<td>No</td>
 </tr><tr><td>throttle</td>
 <td>No</td>
+</tr><tr><td>debounce</td>
+<td>No</td>
+</tr><tr><td>retry</td>
+<td>Yes</td>
 </tr><tr><td>take</td>
 <td>Yes</td>
 </tr><tr><td>take(channel)</td>
 <td>Sometimes (see API reference)</td>
-</tr><tr><td>take.maybe</td>
+</tr><tr><td>takeMaybe</td>
 <td>Yes</td>
 </tr><tr><td>put</td>
 <td>No</td>
-</tr><tr><td>put.resolve</td>
+</tr><tr><td>putResolve</td>
 <td>Yes</td>
 </tr><tr><td>put(channel, action)</td>
 <td>No</td>
@@ -1289,6 +1393,8 @@ For testing purposes only.
 </tr><tr><td>cancelled</td>
 <td>Yes</td>
 </tr><tr><td>race</td>
+<td>Yes</td>
+</tr><tr><td>delay</td>
 <td>Yes</td>
 </tr><tr><td>all</td>
 <td>Blocks if there is a blocking effect in the array or object</td>
@@ -1333,7 +1439,7 @@ For testing purposes only.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"8. API Reference","level":"1.9","depth":1,"previous":{"title":"7. Glossary","level":"1.8","depth":1,"path":"docs/Glossary.md","ref":"docs/Glossary.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/api/README.md","mtime":"2017-11-05T14:45:30.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"8. API Reference","level":"1.9","depth":1,"previous":{"title":"7. Glossary","level":"1.8","depth":1,"path":"docs/Glossary.md","ref":"docs/Glossary.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/api/README.md","mtime":"2019-01-20T12:34:51.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

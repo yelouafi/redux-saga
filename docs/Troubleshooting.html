@@ -238,7 +238,7 @@
                 <a href="basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="advanced/RootSaga.html">
+            
+                <a href="advanced/RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -544,7 +557,7 @@
     console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<p>It will put the application into an infinite loop because <code>take()</code> only creates a description of the effect. Unless you <code>yield</code> it for the middleware to execute, the <code>while</code> loop will behave like a regular <code>while</code> loop, and freeze your application.</p><p>Adding <code>yield</code> will pause the generator and return control to the Redux Saga middleware which will execute the effect. In case of <code>take()</code>, Redux Saga will wait for the next action matching the pattern, and only then will resume the generator.</p><p>To fix the example above, simply <code>yield</code> the effect returned by <code>take()</code>:</p><pre><code class="lang-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> take <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<p>It will put the application into an infinite loop because <code>take()</code> only creates a description of the effect. Unless you <code>yield</code> it for the middleware to execute, the <code>while</code> loop will behave like a regular <code>while</code> loop, and freeze your application.</p><p>Adding <code>yield</code> will pause the generator and return control to the Redux Saga middleware which will execute the effect. In case of <code>take()</code>, Redux Saga will wait for the next action matching the pattern, and only then will resume the generator.</p><p>To fix the example above, <code>yield</code> the effect returned by <code>take()</code>:</p><pre><code class="lang-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> take <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">logActions</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -584,7 +597,10 @@ all the actions dispatched in-between.</p><p>To avoid blocking the Saga, you can
     <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>handleRequestAction<span class="token punctuation">,</span> url<span class="token punctuation">,</span> params<span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// The Saga will resume immediately</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-
+<h3 id="error-stack-for-errors-bubbling-to-root-saga-is-unreadable">Error stack for errors bubbling to root saga is unreadable</h3><p>Tasks in saga are asynchronous by their nature, so we have to make some
+additional work to show &quot;saga stack&quot; as it was a chain of synchronous calls. So staring with <code>redux-saga@v1</code>, when error bubbles to root saga, the library builds that &quot;saga stack&quot; and passes it as a property <code>sagaStack: string</code> of the second argument of <code>onError</code> callback (also see <a href="https://redux-saga.js.org/docs/api/index.html#createsagamiddlewareoptions" target="_blank">Middleware options</a>), so you can send it to your error tracking system or make other additional work.</p><p>As a result, you can see something like this in your console.</p><p><img alt="saga-error-stack.png" src="assets/saga-error-stack.png"></p><p>If you want to have those &quot;saga stack&quot; with file names and line numbers for <strong>development purposes</strong>, you can add <a href="https://www.npmjs.com/package/babel-plugin-redux-saga" target="_blank">babel-plugin</a>, which allows you to have enhanced information.
+Docs are available <a href="../packages/babel-plugin-redux-saga">here</a>.
+For babel-plugin usage example check <a href="../examples/error-demo">this example</a></p><p>After adding <code>babel-plugin-redux-saga</code> the same output looks like</p><p><img alt="saga-error-stack-with-babel-plugin.png" src="assets/saga-error-stack-with-babel-plugin.png"></p><p>Note: <a href="../examples/error-demo/test/sagas.js">It works for testing as well</a>, just make sure you (or your runner) run saga via <code>sagaMiddleware</code>.</p><p><img alt="saga-error-stack-node.png" src="assets/saga-error-stack-node.png"></p>
                                 
                                 </section>
                             
@@ -627,7 +643,7 @@ all the actions dispatched in-between.</p><p>To avoid blocking the Saga, you can
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"6. Troubleshooting","level":"1.7","depth":1,"next":{"title":"7. Glossary","level":"1.8","depth":1,"path":"docs/Glossary.md","ref":"docs/Glossary.md","articles":[]},"previous":{"title":"5. External Resources","level":"1.6","depth":1,"path":"docs/ExternalResources.md","ref":"docs/ExternalResources.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/Troubleshooting.md","mtime":"2017-11-02T12:10:20.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"6. Troubleshooting","level":"1.7","depth":1,"next":{"title":"7. Glossary","level":"1.8","depth":1,"path":"docs/Glossary.md","ref":"docs/Glossary.md","articles":[]},"previous":{"title":"5. External Resources","level":"1.6","depth":1,"path":"docs/ExternalResources.md","ref":"docs/ExternalResources.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/Troubleshooting.md","mtime":"2018-12-21T10:24:42.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

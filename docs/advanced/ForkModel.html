@@ -238,7 +238,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="RootSaga.html">
+            
+                <a href="RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -540,21 +553,20 @@
 </li>
 <li><code>spawn</code> is used to create <em>detached forks</em>
 </li></ul>
-<h2 id="attached-forks-using-fork">Attached forks (using <code>fork</code>)</h2><p>Attached forks remains attached to their parent by the following rules</p><h3 id="completion">Completion</h3><ul><li>A Saga terminates only after
+<h2 id="attached-forks-using-fork">Attached forks (using <code>fork</code>)</h2><p>Attached forks remain attached to their parent by the following rules</p><h3 id="completion">Completion</h3><ul><li>A Saga terminates only after
 <ul><li>It terminates its own body of instructions
 </li>
 <li>All attached forks are themselves terminated
 </li></ul>
 </li></ul>
-<p>For example say we have the following</p><pre><code class="lang-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> fork<span class="token punctuation">,</span> call<span class="token punctuation">,</span> put <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<p>For example say we have the following</p><pre><code class="lang-js"><span class="token keyword">import</span> <span class="token punctuation">{</span> fork<span class="token punctuation">,</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 <span class="token keyword">import</span> api from <span class="token string">&apos;./somewhere/api&apos;</span> <span class="token comment" spellcheck="true">// app specific</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> receiveData <span class="token punctuation">}</span> from <span class="token string">&apos;./somewhere/actions&apos;</span> <span class="token comment" spellcheck="true">// app specific</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">const</span> task1 <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;users&apos;</span><span class="token punctuation">)</span>
   <span class="token keyword">const</span> task2 <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;comments&apos;</span><span class="token punctuation">)</span>
-  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchResource</span><span class="token punctuation">(</span>resource<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -566,14 +578,14 @@
   <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>fetchAll<span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
 <p><code>call(fetchAll)</code> will terminate after:</p><ul><li><p>The <code>fetchAll</code> body itself terminates, this means all 3 effects are performed. Since <code>fork</code> effects are non blocking, the
-task will block on <code>call(delay, 1000)</code></p></li>
+task will block on <code>delay(1000)</code></p></li>
 <li><p>The 2 forked tasks terminate, i.e. after fetching the required resources and putting the corresponding <code>receiveData</code> actions</p></li></ul>
 <p>So the whole task will block until a delay of 1000 millisecond passed <em>and</em> both <code>task1</code> and <code>task2</code> finished their business.</p><p>Say for example, the delay of 1000 milliseconds elapsed and the 2 tasks haven&apos;t yet finished, then <code>fetchAll</code> will still wait
 for all forked tasks to finish before terminating the whole task.</p><p>The attentive reader might have noticed the <code>fetchAll</code> saga could be rewritten using the parallel Effect</p><pre><code class="lang-js"><span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">yield</span> <span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
     <span class="token function">call</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;users&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>     <span class="token comment" spellcheck="true">// task1</span>
     <span class="token function">call</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;comments&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment" spellcheck="true">// task2,</span>
-    <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span>
+    <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span>
   <span class="token punctuation">]</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
 <p>In fact, attached forks shares the same semantics with the parallel Effect:</p><ul><li>We&apos;re executing tasks in parallel
@@ -581,10 +593,10 @@ for all forked tasks to finish before terminating the whole task.</p><p>The atte
 <li>The parent will terminate after all launched tasks terminate
 </li></ul>
 <p>And this applies for all other semantics as well (error and cancellation propagation). You can understand how
-attached forks behave by simply considering it as a <em>dynamic parallel</em> Effect.</p><h2 id="error-propagation">Error propagation</h2><p>Following the same analogy, Let&apos;s examine in detail how errors are handled in parallel Effects</p><p>for example, let&apos;s say we have this Effect</p><pre><code class="lang-js"><span class="token keyword">yield</span> <span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
+attached forks behave by considering it as a <em>dynamic parallel</em> Effect.</p><h2 id="error-propagation">Error propagation</h2><p>Following the same analogy, Let&apos;s examine in detail how errors are handled in parallel Effects</p><p>for example, let&apos;s say we have this Effect</p><pre><code class="lang-js"><span class="token keyword">yield</span> <span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">[</span>
   <span class="token function">call</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;users&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
   <span class="token function">call</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;comments&apos;</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
-  <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span>
+  <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span>
 <span class="token punctuation">]</span><span class="token punctuation">)</span></code></pre>
 <p>The above effect will fail as soon as any one of the 3 child Effects fails. Furthermore, the uncaught error will cause
 the parallel Effect to cancel all the other pending Effects. So for example if <code>call(fetchResource, &apos;users&apos;)</code> raises an
@@ -596,7 +608,7 @@ same error from the failed call.</p><p>Similarly for attached forks, a Saga abor
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">const</span> task1 <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;users&apos;</span><span class="token punctuation">)</span>
   <span class="token keyword">const</span> task2 <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>fetchResource<span class="token punctuation">,</span> <span class="token string">&apos;comments&apos;</span><span class="token punctuation">)</span>
-  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">1000</span><span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span>
 <span class="token punctuation">}</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">fetchResource</span><span class="token punctuation">(</span>resource<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -611,8 +623,8 @@ same error from the failed call.</p><p>Similarly for attached forks, a Saga abor
     <span class="token comment" spellcheck="true">// handle fetchAll errors</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<p>If at a moment, for example, <code>fetchAll</code> is blocked on the <code>call(delay, 1000)</code> Effect, and say, <code>task1</code> failed, then the whole
-<code>fetchAll</code> task will fail causing</p><ul><li><p>Cancellation of all other pending tasks. This includes:</p><ul><li>The <em>main task</em> (the body of <code>fetchAll</code>): cancelling it means cancelling the current Effect <code>call(delay, 1000)</code>
+<p>If at a moment, for example, <code>fetchAll</code> is blocked on the <code>delay(1000)</code> Effect, and say, <code>task1</code> failed, then the whole
+<code>fetchAll</code> task will fail causing</p><ul><li><p>Cancellation of all other pending tasks. This includes:</p><ul><li>The <em>main task</em> (the body of <code>fetchAll</code>): cancelling it means cancelling the current Effect <code>delay(1000)</code>
 </li>
 <li>The other forked tasks which are still pending. i.e. <code>task2</code> in our example.
 </li></ul>
@@ -668,7 +680,7 @@ forks (you need to cancel them explicitly).</p><p>In short, detached forks behav
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.8 redux-saga's fork model","level":"1.4.8","depth":2,"next":{"title":"3.9 Common Concurrency Patterns","level":"1.4.9","depth":2,"path":"docs/advanced/Concurrency.md","ref":"docs/advanced/Concurrency.md","articles":[]},"previous":{"title":"3.7 Task cancellation","level":"1.4.7","depth":2,"path":"docs/advanced/TaskCancellation.md","ref":"docs/advanced/TaskCancellation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/ForkModel.md","mtime":"2017-11-02T12:10:20.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.8 redux-saga's fork model","level":"1.4.8","depth":2,"next":{"title":"3.9 Common Concurrency Patterns","level":"1.4.9","depth":2,"path":"docs/advanced/Concurrency.md","ref":"docs/advanced/Concurrency.md","articles":[]},"previous":{"title":"3.7 Task cancellation","level":"1.4.7","depth":2,"path":"docs/advanced/TaskCancellation.md","ref":"docs/advanced/TaskCancellation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/ForkModel.md","mtime":"2018-10-09T14:47:43.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

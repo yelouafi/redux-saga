@@ -60,7 +60,7 @@
     <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../recipes/" />
+    <link rel="next" href="RootSaga.html" />
     
     
     <link rel="prev" href="UsingRunSaga.html" />
@@ -238,7 +238,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="RootSaga.html">
+            
+                <a href="RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -538,8 +551,7 @@
                                 
                                 <h1 id="using-channels">Using Channels</h1><p>Until now we&apos;ve used the <code>take</code> and <code>put</code> effects to communicate with the Redux Store. Channels generalize those Effects to communicate with external event sources or between Sagas themselves. They can also be used to queue specific actions from the Store.</p><p>In this section, we&apos;ll see:</p><ul><li><p>How to use the <code>yield actionChannel</code> Effect to buffer specific actions from the Store.</p></li>
 <li><p>How to use the <code>eventChannel</code> factory function to connect <code>take</code> Effects to external event sources.</p></li>
-<li><p>How to create a channel using the generic <code>channel</code> factory function and use it in <code>take</code>/<code>put</code> Effects to
-communicate between two Sagas.</p></li></ul>
+<li><p>How to create a channel using the generic <code>channel</code> factory function and use it in <code>take</code>/<code>put</code> Effects to communicate between two Sagas.</p></li></ul>
 <h2 id="using-the-actionchannel-effect">Using the <code>actionChannel</code> Effect</h2><p>Let&apos;s review the canonical example:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> fork<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">watchRequests</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -571,7 +583,7 @@ communicate between two Sagas.</p></li></ul>
   <span class="token keyword">const</span> requestChan <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">actionChannel</span><span class="token punctuation">(</span><span class="token string">&apos;REQUEST&apos;</span><span class="token punctuation">,</span> buffers<span class="token punctuation">.</span><span class="token function">sliding</span><span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span></code></pre>
-<h2 id="using-the-eventchannel-factory-to-connect-to-external-events">Using the <code>eventChannel</code> factory to connect to external events</h2><p>Like <code>actionChannel</code> (Effect), <code>eventChannel</code> (a factory function, not an Effect) creates a Channel for events but from event sources other than the Redux Store.</p><p>This simple example creates a Channel from an interval:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> eventChannel<span class="token punctuation">,</span> END <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
+<h2 id="using-the-eventchannel-factory-to-connect-to-external-events">Using the <code>eventChannel</code> factory to connect to external events</h2><p>Like <code>actionChannel</code> (Effect), <code>eventChannel</code> (a factory function, not an Effect) creates a Channel for events but from event sources other than the Redux Store.</p><p>This basic example creates a Channel from an interval:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> eventChannel<span class="token punctuation">,</span> END <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
 
 <span class="token keyword">function</span> <span class="token function">countdown</span><span class="token punctuation">(</span>secs<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">return</span> <span class="token function">eventChannel</span><span class="token punctuation">(</span>emitter <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
@@ -609,7 +621,7 @@ communicate between two Sagas.</p></li></ul>
     console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&apos;countdown terminated&apos;</span><span class="token punctuation">)</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<p>So the Saga is yielding a <code>take(chan)</code>. This causes the Saga to block until a message is put on the channel. In our example above, it corresponds to when we invoke <code>emitter(secs)</code>. Note also we&apos;re executing the whole <code>while (true) {...}</code> loop inside a <code>try/finally</code> block. When the interval terminates, the countdown function closes the event channel by invoking <code>emitter(END)</code>. Closing a channel has the effect of terminating all Sagas blocked on a <code>take</code> from that channel. In our example, terminating the Saga will cause it to jump to its <code>finally</code> block (if provided, otherwise the Saga simply terminates).</p><p>The subscriber returns an <code>unsubscribe</code> function. This is used by the channel to unsubscribe before the event source complete. Inside a Saga consuming messages from an event channel, if we want to <em>exit early</em> before the event source complete (e.g. Saga has been cancelled) you can call <code>chan.close()</code> to close the channel and unsubscribe from the source.</p><p>For example, we can make our Saga support cancellation:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> cancelled <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<p>So the Saga is yielding a <code>take(chan)</code>. This causes the Saga to block until a message is put on the channel. In our example above, it corresponds to when we invoke <code>emitter(secs)</code>. Note also we&apos;re executing the whole <code>while (true) {...}</code> loop inside a <code>try/finally</code> block. When the interval terminates, the countdown function closes the event channel by invoking <code>emitter(END)</code>. Closing a channel has the effect of terminating all Sagas blocked on a <code>take</code> from that channel. In our example, terminating the Saga will cause it to jump to its <code>finally</code> block (if provided, otherwise the Saga terminates).</p><p>The subscriber returns an <code>unsubscribe</code> function. This is used by the channel to unsubscribe before the event source complete. Inside a Saga consuming messages from an event channel, if we want to <em>exit early</em> before the event source complete (e.g. Saga has been cancelled) you can call <code>chan.close()</code> to close the channel and unsubscribe from the source.</p><p>For example, we can make our Saga support cancellation:</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> cancelled <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> eventChannel<span class="token punctuation">,</span> END <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
 
 <span class="token comment" spellcheck="true">// creates an event Channel from an interval of seconds</span>
@@ -630,8 +642,8 @@ communicate between two Sagas.</p></li></ul>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
 <p>Here is another example of how you can use event channels to pass WebSocket events into your saga (e.g.: using socket.io library).
-Suppose you are waiting for a server message <code>ping</code> then reply with a <code>pong</code> message after some delay.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> apply <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> eventChannel<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
+Suppose you are waiting for a server message <code>ping</code> then reply with a <code>pong</code> message after some delay.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> apply<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> eventChannel <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> createWebSocketConnection <span class="token punctuation">}</span> from <span class="token string">&apos;./socketConnection&apos;</span>
 
 <span class="token comment" spellcheck="true">// this function creates an event channel from a given socket</span>
@@ -647,8 +659,14 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
       <span class="token function">emit</span><span class="token punctuation">(</span>event<span class="token punctuation">.</span>payload<span class="token punctuation">)</span>
     <span class="token punctuation">}</span>
 
+    <span class="token keyword">const</span> errorHandler <span class="token operator">=</span> <span class="token punctuation">(</span>errorEvent<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token punctuation">{</span>
+      <span class="token comment" spellcheck="true">// create an Error object and put it into the channel</span>
+      <span class="token function">emit</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Error</span><span class="token punctuation">(</span>errorEvent<span class="token punctuation">.</span>reason<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
     <span class="token comment" spellcheck="true">// setup the subscription</span>
     socket<span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&apos;ping&apos;</span><span class="token punctuation">,</span> pingHandler<span class="token punctuation">)</span>
+    socket<span class="token punctuation">.</span><span class="token function">on</span><span class="token punctuation">(</span><span class="token string">&apos;error&apos;</span><span class="token punctuation">,</span> errorHandler<span class="token punctuation">)</span>
 
     <span class="token comment" spellcheck="true">// the subscriber must return an unsubscribe function</span>
     <span class="token comment" spellcheck="true">// this will be invoked when the saga calls `channel.close` method</span>
@@ -662,7 +680,7 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
 
 <span class="token comment" spellcheck="true">// reply with a `pong` message by invoking `socket.emit(&apos;pong&apos;)`</span>
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">pong</span><span class="token punctuation">(</span>socket<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">5000</span><span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">5000</span><span class="token punctuation">)</span>
   <span class="token keyword">yield</span> <span class="token function">apply</span><span class="token punctuation">(</span>socket<span class="token punctuation">,</span> socket<span class="token punctuation">.</span>emit<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">&apos;pong&apos;</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token comment" spellcheck="true">// call `emit` as a method with `socket` as context</span>
 <span class="token punctuation">}</span>
 
@@ -671,13 +689,21 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
   <span class="token keyword">const</span> socketChannel <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>createSocketChannel<span class="token punctuation">,</span> socket<span class="token punctuation">)</span>
 
   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-    <span class="token keyword">const</span> payload <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>socketChannel<span class="token punctuation">)</span>
-    <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span> type<span class="token punctuation">:</span> INCOMING_PONG_PAYLOAD<span class="token punctuation">,</span> payload <span class="token punctuation">}</span><span class="token punctuation">)</span>
-    <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>pong<span class="token punctuation">,</span> socket<span class="token punctuation">)</span>
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+      <span class="token comment" spellcheck="true">// An error from socketChannel will cause the saga jump to the catch block</span>
+      <span class="token keyword">const</span> payload <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">take</span><span class="token punctuation">(</span>socketChannel<span class="token punctuation">)</span>
+      <span class="token keyword">yield</span> <span class="token function">put</span><span class="token punctuation">(</span><span class="token punctuation">{</span> type<span class="token punctuation">:</span> INCOMING_PONG_PAYLOAD<span class="token punctuation">,</span> payload <span class="token punctuation">}</span><span class="token punctuation">)</span>
+      <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>pong<span class="token punctuation">,</span> socket<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      console<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">&apos;socket error:&apos;</span><span class="token punctuation">,</span> err<span class="token punctuation">)</span>
+      <span class="token comment" spellcheck="true">// socketChannel is still open in catch block</span>
+      <span class="token comment" spellcheck="true">// if we want end the socketChannel, we need close it explicitly</span>
+      <span class="token comment" spellcheck="true">// socketChannel.close()</span>
+    <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
 <blockquote><p>Note: messages on an eventChannel are not buffered by default. You have to provide a buffer to the eventChannel factory in order to specify buffering strategy for the channel (e.g. <code>eventChannel(subscriber, buffer)</code>).
-<a href="../api#buffers">See the API docs</a> for more info.</p></blockquote><h3 id="using-channels-to-communicate-between-sagas">Using channels to communicate between Sagas</h3><p>Besides action channels and event channels. You can also directly create channels which are not connected to any source by default. You can then manually <code>put</code> on the channel. This is handy when you want to use a channel to communicate between sagas.</p><p>To illustrate, let&apos;s review the former example of request handling.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> fork<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<a href="../api#buffers">See the API docs</a> for more info.</p></blockquote><p>In this WebSocket example, the socketChannel may emit an error when some socket error occurs, this will abort our <code>yield take(socketChannel)</code> waiting on this eventChannel. Note that emitting an error will not abort the channel by default, we need to close the channel explicitly if we want to end the channel after an error.</p><h3 id="using-channels-to-communicate-between-sagas">Using channels to communicate between Sagas</h3><p>Besides action channels and event channels. You can also directly create channels which are not connected to any source by default. You can then manually <code>put</code> on the channel. This is handy when you want to use a channel to communicate between sagas.</p><p>To illustrate, let&apos;s review the former example of request handling.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> fork<span class="token punctuation">,</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">watchRequests</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -711,7 +737,7 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
     <span class="token comment" spellcheck="true">// process the request</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<p>In the above example, we create a channel using the <code>channel</code> factory. We get back a channel which by default buffers all messages we put on it (unless there is a pending taker, in which the taker is resumed immediately with the message).</p><p>The <code>watchRequests</code> saga then forks three worker sagas. Note the created channel is supplied to all forked sagas. <code>watchRequests</code> will use this channel to <em>dispatch</em> work to the three worker sagas. On each <code>REQUEST</code> action the Saga will simply put the payload on the channel. The payload will then be taken by any <em>free</em> worker. Otherwise it will be queued by the channel until a worker Saga is ready to take it.</p><p>All the three workers run a typical while loop. On each iteration, a worker will take the next request, or will block until a message is available. Note that this mechanism provides an automatic load-balancing between the 3 workers. Rapid workers are not slowed down by slow workers.</p>
+<p>In the above example, we create a channel using the <code>channel</code> factory. We get back a channel which by default buffers all messages we put on it (unless there is a pending taker, in which the taker is resumed immediately with the message).</p><p>The <code>watchRequests</code> saga then forks three worker sagas. Note the created channel is supplied to all forked sagas. <code>watchRequests</code> will use this channel to <em>dispatch</em> work to the three worker sagas. On each <code>REQUEST</code> action the Saga will put the payload on the channel. The payload will then be taken by any <em>free</em> worker. Otherwise it will be queued by the channel until a worker Saga is ready to take it.</p><p>All the three workers run a typical while loop. On each iteration, a worker will take the next request, or will block until a message is available. Note that this mechanism provides an automatic load-balancing between the 3 workers. Rapid workers are not slowed down by slow workers.</p>
                                 
                                 </section>
                             
@@ -743,7 +769,7 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
                 </a>
                 
                 
-                <a href="../recipes/" class="navigation navigation-next " aria-label="Next page: 4. Recipes">
+                <a href="RootSaga.html" class="navigation navigation-next " aria-label="Next page: 3.13 Root Saga Patterns">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -754,7 +780,7 @@ Suppose you are waiting for a server message <code>ping</code> then reply with a
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"next":{"title":"4. Recipes","level":"1.5","depth":1,"path":"docs/recipes/README.md","ref":"docs/recipes/README.md","articles":[]},"previous":{"title":"3.11 Connecting Sagas to external Input/Output","level":"1.4.11","depth":2,"path":"docs/advanced/UsingRunSaga.md","ref":"docs/advanced/UsingRunSaga.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/Channels.md","mtime":"2017-11-02T12:10:20.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"next":{"title":"3.13 Root Saga Patterns","level":"1.4.13","depth":2,"path":"docs/advanced/RootSaga.md","ref":"docs/advanced/RootSaga.md","articles":[]},"previous":{"title":"3.11 Connecting Sagas to external Input/Output","level":"1.4.11","depth":2,"path":"docs/advanced/UsingRunSaga.md","ref":"docs/advanced/UsingRunSaga.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/advanced/Channels.md","mtime":"2018-10-09T14:47:43.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>

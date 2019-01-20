@@ -21,6 +21,12 @@ ES6 の Generator 関数を使うことで読み書きしやすく、テスト�
 $ npm install --save redux-saga
 ```
 
+または、
+
+```sh
+$ yarn add redux-saga
+```
+
 別の方法として、UMD ビルドを HTML ページの `<script>` タグで直接使うこともできます。詳しくは[こちら](#ブラウザで-umd-ビルドを使用する).
 
 ## 使い方
@@ -212,5 +218,5 @@ $ npm run test-async
 ```sh
 $ npm run real-world
 
-# またテストはありません・・・
+# まだテストはありません・・・
 ```

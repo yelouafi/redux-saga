@@ -31,8 +31,12 @@ lib
 es
 
 # compiled umd js files
-# dist (keep this for vanilla examples)
+dist
 
 # docs generated files
 _book
 .idea
+
+# as we don't use package-lock
+package-lock.json
+yarn.lock

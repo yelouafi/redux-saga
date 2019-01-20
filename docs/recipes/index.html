@@ -63,7 +63,7 @@
     <link rel="next" href="../ExternalResources.html" />
     
     
-    <link rel="prev" href="../advanced/Channels.html" />
+    <link rel="prev" href="../advanced/RootSaga.html" />
     
 
     
@@ -238,7 +238,7 @@
                 <a href="../basics/Effect.html">
             
                     
-                    2.4 A common abstraction: Effect
+                    2.5 A common abstraction: Effect
             
                 </a>
             
@@ -421,6 +421,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.4.13" data-path="../advanced/RootSaga.html">
+            
+                <a href="../advanced/RootSaga.html">
+            
+                    
+                    3.13 Root Saga Patterns
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -545,13 +558,12 @@
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">watchInput</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">yield</span> <span class="token function">throttle</span><span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">,</span> <span class="token string">&apos;INPUT_CHANGED&apos;</span><span class="token punctuation">,</span> handleInput<span class="token punctuation">)</span>
 <span class="token punctuation">}</span></code></pre>
-<p>By using this helper the <code>watchInput</code> won&apos;t start a new <code>handleInput</code> task for 500ms, but in the same time it will still be accepting the latest <code>INPUT_CHANGED</code> actions into its underlaying <code>buffer</code>, so it&apos;ll miss all <code>INPUT_CHANGED</code> actions happening in-between. This ensures that the Saga will take at most one <code>INPUT_CHANGED</code> action during each period of 500ms and still be able to process trailing action.</p><h2 id="debouncing">Debouncing</h2><p>To debounce a sequence, put the built-in <code>delay</code> helper in the forked task:</p><pre><code class="lang-javascript">
-<span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> cancel<span class="token punctuation">,</span> fork<span class="token punctuation">,</span> take <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<p>By using this helper the <code>watchInput</code> won&apos;t start a new <code>handleInput</code> task for 500ms, but in the same time it will still be accepting the latest <code>INPUT_CHANGED</code> actions into its underlaying <code>buffer</code>, so it&apos;ll miss all <code>INPUT_CHANGED</code> actions happening in-between. This ensures that the Saga will take at most one <code>INPUT_CHANGED</code> action during each period of 500ms and still be able to process trailing action.</p><h2 id="debouncing">Debouncing</h2><p>From redux-saga@v1 <a href="../api/#debouncems-pattern-saga-args">debounce</a> is built-in effect.</p><p>Let&apos;s consider how the effect could be implemented as a combination of other base effects.</p><p>To debounce a sequence, put the built-in <code>delay</code> helper in the forked task:</p><pre><code class="lang-javascript">
+<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> cancel<span class="token punctuation">,</span> fork<span class="token punctuation">,</span> take<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">handleInput</span><span class="token punctuation">(</span>input<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// debounce by 500ms</span>
-  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span>
 
@@ -565,14 +577,12 @@
     task <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">fork</span><span class="token punctuation">(</span>handleInput<span class="token punctuation">,</span> input<span class="token punctuation">)</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span></code></pre>
-<p>The <code>delay</code> function implements a simple debounce using a Promise.</p><pre><code class="lang-javascript"><span class="token keyword">const</span> delay <span class="token operator">=</span> <span class="token punctuation">(</span>ms<span class="token punctuation">)</span> <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token keyword">new</span> <span class="token class-name">Promise</span><span class="token punctuation">(</span>resolve <span class="token operator">=</span><span class="token operator">&gt;</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span>resolve<span class="token punctuation">,</span> ms<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
 <p>In the above example <code>handleInput</code> waits for 500ms before performing its logic. If the user types something during this period we&apos;ll get more <code>INPUT_CHANGED</code> actions. Since <code>handleInput</code> will still be blocked in the <code>delay</code> call, it&apos;ll be cancelled by <code>watchInput</code> before it can start performing its logic.</p><p>Example above could be rewritten with redux-saga <code>takeLatest</code> helper:</p><pre><code class="lang-javascript">
-<span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> takeLatest <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> takeLatest<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">handleInput</span><span class="token punctuation">(</span><span class="token punctuation">{</span> input <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// debounce by 500ms</span>
-  <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">500</span><span class="token punctuation">)</span>
+  <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">500</span><span class="token punctuation">)</span>
   <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
 <span class="token punctuation">}</span>
 
@@ -580,9 +590,8 @@
   <span class="token comment" spellcheck="true">// will cancel current running handleInput task</span>
   <span class="token keyword">yield</span> <span class="token function">takeLatest</span><span class="token punctuation">(</span><span class="token string">&apos;INPUT_CHANGED&apos;</span><span class="token punctuation">,</span> handleInput<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span></code></pre>
-<h2 id="retrying-xhr-calls">Retrying XHR calls</h2><p>To retry a XHR call for a specific amount of times, use a for loop with a delay:</p><pre><code class="lang-javascript">
-<span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> take <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
+<h2 id="retrying-xhr-calls">Retrying XHR calls</h2><p>From redux-saga@v1 <a href="../api/#retrymaxtries-delay-fn-args">retry</a> is built-in effect.</p><p>Let&apos;s consider how the effect could be implemented as a combination of other base effects.</p><p>To retry an XHR call for a specific amount of times, use a for loop with a delay:</p><pre><code class="lang-javascript">
+<span class="token keyword">import</span> <span class="token punctuation">{</span> call<span class="token punctuation">,</span> put<span class="token punctuation">,</span> take<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">updateApi</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">5</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -591,7 +600,7 @@
       <span class="token keyword">return</span> apiResponse<span class="token punctuation">;</span>
     <span class="token punctuation">}</span> <span class="token keyword">catch</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token keyword">if</span><span class="token punctuation">(</span>i <span class="token operator">&lt;</span> <span class="token number">4</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
       <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
@@ -617,7 +626,7 @@
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>In the above example the <code>apiRequest</code> will be retried for 5 times, with a delay of 2 seconds in between. After the 5th failure, the exception thrown will get caught by the parent saga, which will dispatch the <code>UPDATE_ERROR</code> action.</p><p>If you want unlimited retries, then the <code>for</code> loop can be replaced with a <code>while (true)</code>. Also instead of <code>take</code> you can use <code>takeLatest</code>, so only the last request will be retried. By adding an <code>UPDATE_RETRY</code> action in the error handling, we can inform the user that the update was not successfull but it will be retried.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
+<p>In the above example the <code>apiRequest</code> will be retried for 5 times, with a delay of 2 seconds in between. After the 5th failure, the exception thrown will get caught by the parent saga, which will dispatch the <code>UPDATE_ERROR</code> action.</p><p>If you want unlimited retries, then the <code>for</code> loop can be replaced with a <code>while (true)</code>. Also instead of <code>take</code> you can use <code>takeLatest</code>, so only the last request will be retried. By adding an <code>UPDATE_RETRY</code> action in the error handling, we can inform the user that the update was not successful but it will be retried.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">updateApi</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token keyword">true</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -629,7 +638,7 @@
         type<span class="token punctuation">:</span> <span class="token string">&apos;UPDATE_RETRY&apos;</span><span class="token punctuation">,</span>
         error
       <span class="token punctuation">}</span><span class="token punctuation">)</span>
-      <span class="token keyword">yield</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">yield</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">2000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
@@ -651,9 +660,8 @@ first and foremost before assuming they don&apos;t know what they are doing. <a 
 The <a href="http://redux.js.org/docs/recipes/ImplementingUndoHistory.html" target="_blank">redux documentation</a> describes a
 robust way to implement an undo based on modifying the reducer to contain <code>past</code>, <code>present</code>,
 and <code>future</code> state.  There is even a library <a href="https://github.com/omnidan/redux-undo" target="_blank">redux-undo</a> that
-creates a higher order reducer to do most of the heavy lifting for the developer.</p><p>However, this method comes with overhead because it stores references to the previous state(s) of the application.</p><p>Using redux-saga&apos;s <code>delay</code> and <code>race</code> we can implement a simple, one-time undo without enhancing
-our reducer or storing the previous state.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> spawn<span class="token punctuation">,</span> race <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
-<span class="token keyword">import</span> <span class="token punctuation">{</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga&apos;</span>
+creates a higher order reducer to do most of the heavy lifting for the developer.</p><p>However, this method comes with overhead because it stores references to the previous state(s) of the application.</p><p>Using redux-saga&apos;s <code>delay</code> and <code>race</code> we can implement a basic, one-time undo without enhancing
+our reducer or storing the previous state.</p><pre><code class="lang-javascript"><span class="token keyword">import</span> <span class="token punctuation">{</span> take<span class="token punctuation">,</span> put<span class="token punctuation">,</span> call<span class="token punctuation">,</span> spawn<span class="token punctuation">,</span> race<span class="token punctuation">,</span> delay <span class="token punctuation">}</span> from <span class="token string">&apos;redux-saga/effects&apos;</span>
 <span class="token keyword">import</span> <span class="token punctuation">{</span> updateThreadApi<span class="token punctuation">,</span> actions <span class="token punctuation">}</span> from <span class="token string">&apos;somewhere&apos;</span>
 
 <span class="token keyword">function</span><span class="token operator">*</span> <span class="token function">onArchive</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -673,7 +681,7 @@ our reducer or storing the previous state.</p><pre><code class="lang-javascript"
   <span class="token comment" spellcheck="true">// after 5 seconds, &apos;archive&apos; will be the winner of the race-condition</span>
   <span class="token keyword">const</span> <span class="token punctuation">{</span> undo<span class="token punctuation">,</span> archive <span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token keyword">yield</span> <span class="token function">race</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
     undo<span class="token punctuation">:</span> <span class="token function">take</span><span class="token punctuation">(</span>action <span class="token operator">=</span><span class="token operator">&gt;</span> action<span class="token punctuation">.</span>type <span class="token operator">===</span> <span class="token string">&apos;UNDO&apos;</span> <span class="token operator">&amp;&amp;</span> action<span class="token punctuation">.</span>undoId <span class="token operator">===</span> undoId<span class="token punctuation">)</span><span class="token punctuation">,</span>
-    archive<span class="token punctuation">:</span> <span class="token function">call</span><span class="token punctuation">(</span>delay<span class="token punctuation">,</span> <span class="token number">5000</span><span class="token punctuation">)</span>
+    archive<span class="token punctuation">:</span> <span class="token function">delay</span><span class="token punctuation">(</span><span class="token number">5000</span><span class="token punctuation">)</span>
   <span class="token punctuation">}</span><span class="token punctuation">)</span>
 
   <span class="token comment" spellcheck="true">// hide undo UI element, the race condition has an answer</span>
@@ -725,7 +733,7 @@ our reducer or storing the previous state.</p><pre><code class="lang-javascript"
 
             
                 
-                <a href="../advanced/Channels.html" class="navigation navigation-prev " aria-label="Previous page: 3.12 Using Channels">
+                <a href="../advanced/RootSaga.html" class="navigation navigation-prev " aria-label="Previous page: 3.13 Root Saga Patterns">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -741,7 +749,7 @@ our reducer or storing the previous state.</p><pre><code class="lang-javascript"
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"4. Recipes","level":"1.5","depth":1,"next":{"title":"5. External Resources","level":"1.6","depth":1,"path":"docs/ExternalResources.md","ref":"docs/ExternalResources.md","articles":[]},"previous":{"title":"3.12 Using Channels","level":"1.4.12","depth":2,"path":"docs/advanced/Channels.md","ref":"docs/advanced/Channels.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/recipes/README.md","mtime":"2017-11-02T12:10:20.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2017-12-22T00:44:09.353Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"4. Recipes","level":"1.5","depth":1,"next":{"title":"5. External Resources","level":"1.6","depth":1,"path":"docs/ExternalResources.md","ref":"docs/ExternalResources.md","articles":[]},"previous":{"title":"3.13 Root Saga Patterns","level":"1.4.13","depth":2,"path":"docs/advanced/RootSaga.md","ref":"docs/advanced/RootSaga.md","articles":[]},"dir":"ltr"},"config":{"plugins":["prism@1.0.0","-highlight","github","favicon"],"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/redux-saga/redux-saga/"},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"build/gitbook.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"favicon":{"shortcut":"logo/favicon/favicon.ico","bookmark":"logo/favicon/favicon.ico","appleTouch":"logo/favicon/apple-touch-icon-152x152.png","appleTouchMore":{"120x120":"logo/favicon/apple-touch-icon-120x120.png","180x180":"logo/favicon/apple-touch-icon-180x180.png"}},"prism":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"Redux-Saga","gitbook":"3.2.0"},"file":{"path":"docs/recipes/README.md","mtime":"2018-11-29T19:43:39.000Z","type":"markdown"},"gitbook":{"version":"3.2.0","time":"2019-01-20T12:51:06.368Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
