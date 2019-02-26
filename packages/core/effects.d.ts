@@ -1,5 +1,5 @@
 import { Action, AnyAction } from 'redux'
-import {Last, Reverse} from 'typescript-tuple'
+import { Last, Reverse } from 'typescript-tuple'
 
 import {
   ActionPattern,
@@ -13,6 +13,7 @@ import {
   Predicate,
   Task,
   StrictEffect,
+  ActionMatchingPattern,
 } from '@redux-saga/types'
 
 import { FlushableChannel, PuttableChannel, TakeableChannel } from './index'
@@ -72,6 +73,7 @@ export const effectTypes: {
  * which are still running, it will wait for all the child tasks to terminate
  * before terminating the Task.
  */
+export function take(pattern?: ActionPattern): TakeEffect
 export function take<A extends Action>(pattern?: ActionPattern<A>): TakeEffect
 
 /**
@@ -92,6 +94,7 @@ export function take<A extends Action>(pattern?: ActionPattern<A>): TakeEffect
  * internally all `dispatch`ed actions are going through the `stdChannel` which
  * is getting closed when `dispatch(END)` happens
  */
+export function takeMaybe(pattern?: ActionPattern): TakeEffect
 export function takeMaybe<A extends Action>(pattern?: ActionPattern<A>): TakeEffect
 
 export type TakeEffect = SimpleEffect<'TAKE', TakeEffectDescriptor>
@@ -173,11 +176,20 @@ export interface ChannelTakeEffectDescriptor<T> {
  *   the incoming action to the argument list (i.e. the action will be the last
  *   argument provided to `saga`)
  */
+export function takeEvery<P extends ActionPattern>(
+  pattern: P,
+  worker: (action: ActionMatchingPattern<P>) => any,
+): ForkEffect
+export function takeEvery<P extends ActionPattern, Fn extends (...args: any[]) => any>(
+  pattern: P,
+  worker: Fn,
+  ...args: HelperWorkerParameters<ActionMatchingPattern<P>, Fn>
+): ForkEffect
 export function takeEvery<A extends Action>(pattern: ActionPattern<A>, worker: (action: A) => any): ForkEffect
 export function takeEvery<A extends Action, Fn extends (...args: any[]) => any>(
   pattern: ActionPattern<A>,
   worker: Fn,
-  ...args: AllButLast<Parameters<Fn>>
+  ...args: HelperWorkerParameters<A, Fn>
 ): ForkEffect
 
 /**
@@ -242,6 +254,15 @@ export function takeEvery<T, Fn extends (...args: any[]) => any>(
  *   the incoming action to the argument list (i.e. the action will be the last
  *   argument provided to `saga`)
  */
+export function takeLatest<P extends ActionPattern>(
+  pattern: P,
+  worker: (action: ActionMatchingPattern<P>) => any,
+): ForkEffect
+export function takeLatest<P extends ActionPattern, Fn extends (...args: any[]) => any>(
+  pattern: P,
+  worker: Fn,
+  ...args: HelperWorkerParameters<ActionMatchingPattern<P>, Fn>
+): ForkEffect
 export function takeLatest<A extends Action>(pattern: ActionPattern<A>, worker: (action: A) => any): ForkEffect
 export function takeLatest<A extends Action, Fn extends (...args: any[]) => any>(
   pattern: ActionPattern<A>,
@@ -305,6 +326,15 @@ export function takeLatest<T, Fn extends (...args: any[]) => any>(
  *   add the incoming action to the argument list (i.e. the action will be the
  *   last argument provided to `saga`)
  */
+export function takeLeading<P extends ActionPattern>(
+  pattern: P,
+  worker: (action: ActionMatchingPattern<P>) => any,
+): ForkEffect
+export function takeLeading<P extends ActionPattern, Fn extends (...args: any[]) => any>(
+  pattern: P,
+  worker: Fn,
+  ...args: HelperWorkerParameters<ActionMatchingPattern<P>, Fn>
+): ForkEffect
 export function takeLeading<A extends Action>(pattern: ActionPattern<A>, worker: (action: A) => any): ForkEffect
 export function takeLeading<A extends Action, Fn extends (...args: any[]) => any>(
   pattern: ActionPattern<A>,
@@ -522,9 +552,7 @@ export function cps<Ctx, Fn extends (this: Ctx, ...args: any[]) => void>(
   ...args: CpsFunctionParameters<Fn>
 ): CpsEffect
 
-export type CpsFunctionParameters<Fn extends (...args: any[]) => any> = Last<
-  Parameters<Fn>
-> extends CpsCallback<any>
+export type CpsFunctionParameters<Fn extends (...args: any[]) => any> = Last<Parameters<Fn>> extends CpsCallback<any>
   ? AllButLast<Parameters<Fn>>
   : never
 
@@ -1051,6 +1079,17 @@ export function delay<T = true>(ms: number, val?: T): CallEffect
  *   the incoming action to the argument list (i.e. the action will be the last
  *   argument provided to `saga`)
  */
+export function throttle<P extends ActionPattern>(
+  ms: number,
+  pattern: P,
+  worker: (action: ActionMatchingPattern<P>) => any,
+): ForkEffect
+export function throttle<P extends ActionPattern, Fn extends (...args: any[]) => any>(
+  ms: number,
+  pattern: P,
+  worker: Fn,
+  ...args: HelperWorkerParameters<ActionMatchingPattern<P>, Fn>
+): ForkEffect
 export function throttle<A extends Action>(
   ms: number,
   pattern: ActionPattern<A>,
@@ -1131,6 +1170,17 @@ export function throttle<T, Fn extends (...args: any[]) => any>(
  *   the incoming action to the argument list (i.e. the action will be the last
  *   argument provided to `saga`)
  */
+export function debounce<P extends ActionPattern>(
+  ms: number,
+  pattern: P,
+  worker: (action: ActionMatchingPattern<P>) => any,
+): ForkEffect
+export function debounce<P extends ActionPattern, Fn extends (...args: any[]) => any>(
+  ms: number,
+  pattern: P,
+  worker: Fn,
+  ...args: HelperWorkerParameters<ActionMatchingPattern<P>, Fn>
+): ForkEffect
 export function debounce<A extends Action>(
   ms: number,
   pattern: ActionPattern<A>,
@@ -1277,10 +1327,10 @@ export type RaceEffect<T> = CombinatorEffect<'RACE', T>
 export type RaceEffectDescriptor<T> = CombinatorEffectDescriptor<T>
 
 /**
-* [H, ...T] -> T
-*/
+ * [H, ...T] -> T
+ */
 export type Tail<L extends any[]> = ((...l: L) => any) extends ((h: any, ...t: infer T) => any) ? T : never
 /**
-   * [...A, B] -> A
-   */
+ * [...A, B] -> A
+ */
 export type AllButLast<L extends any[]> = Reverse<Tail<Reverse<L>>>
