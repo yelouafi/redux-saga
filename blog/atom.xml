@@ -6,5 +6,5 @@
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://redux-saga.js.org/blog"/>
     <subtitle>Redux-Saga Blog</subtitle>
-    <icon>https://redux-saga.js.org/static/img/favicon/favicon.ico</icon>
+    <icon>https://redux-saga.js.org/img/favicon/favicon.ico</icon>
 </feed>
