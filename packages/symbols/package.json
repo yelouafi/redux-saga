@@ -2,8 +2,15 @@
   "name": "@redux-saga/symbols",
   "version": "1.1.2",
   "description": "Redux-saga internal symbol \"registry\".",
-  "main": "./dist/redux-saga-symbols.cjs.js",
-  "module": "./dist/redux-saga-symbols.esm.js",
+  "type": "module",
+  "main": "./dist/redux-saga-symbols.cjs",
+  "module": "./dist/redux-saga-symbols.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/redux-saga-symbols.mjs",
+      "require": "./dist/redux-saga-symbols.cjs"
+    }
+  },
   "typings": "./index.d.ts",
   "files": [
     "dist",

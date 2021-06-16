@@ -2,8 +2,19 @@
   "name": "@redux-saga/core",
   "version": "1.1.3",
   "description": "Saga middleware for Redux to handle Side Effects",
-  "main": "./dist/redux-saga-core.cjs.js",
-  "module": "./dist/redux-saga-core.esm.js",
+  "type": "module",
+  "main": "./dist/redux-saga-core.cjs",
+  "module": "./dist/redux-saga-core.mjs",
+  "exports": {
+    ".": {
+      "import": "./dist/redux-saga-core.mjs",
+      "require": "./dist/redux-saga-core.cjs"
+    },
+    "./effects": {
+      "import": "./dist/redux-saga-effects.mjs",
+      "require": "./dist/redux-saga-effects.cjs"
+    }
+  },
   "files": [
     "dist",
     "effects",
@@ -16,7 +27,7 @@
     "clean": "rimraf dist",
     "prebuild": "yarn clean",
     "build": "rollup -c",
-    "postbuild": "node ./scripts/createProxyCjsEntries.js",
+    "postbuild": "node ./scripts/createProxyCjsEntries.cjs",
     "prepare": "yarn build",
     "preversion": "npm test"
   },
